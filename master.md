@@ -4,14 +4,14 @@ description: Master Persona System V10.1 - Complete agent orchestration with par
 
 # 🤖 MASTER PERSONA SYSTEM V10.1
 
-**Tam sistem tek dosyada** - Tüm personalar, parallel execution, conversation tracking, dynamic creation.
+**Complete system in a single file** - All personas, parallel execution, conversation tracking, dynamic creation.
 **Enhanced V10.1**: Auto persona creation API, project-based folder system, plan tracking & retrieval, persistent storage.
 
-⚠️ **GERÇEK AGENT CALLING**: Terminal komutlarıyla external process spawn edilir.
+⚠️ **REAL AGENT CALLING**: External process spawned via terminal commands.
 
 ---
 
-# 📋 İÇİNDEKİLER
+# 📋 TABLE OF CONTENTS
 
 1. [Quick Reference](#quick-reference)
 2. [CORE Personas (Enhanced V7)](#core-personas-enhanced-v7)
@@ -29,15 +29,15 @@ description: Master Persona System V10.1 - Complete agent orchestration with par
 # 🚀 QUICK REFERENCE
 
 ```bash
-# Komutlar
-claude -p "[GÖREV]"                                    # Basit
-claude -p "think: [GÖREV]"                              # Orta
-claude -p "think hard: [GÖREV]"                           # Karmaşık
-claude --model opus -p "think hard: [GÖREV]"             # Çok karmaşık
-claude --model opus -p "ultrathink: [GÖREV]"            # Kritik
+# Commands
+claude -p "[TASK]"                                      # Simple
+claude -p "think: [TASK]"                                # Medium
+claude -p "think hard: [TASK]"                            # Complex
+claude --model opus -p "think hard: [TASK]"              # Very complex
+claude --model opus -p "ultrathink: [TASK]"             # Critical
 
-# Paralel
-claude -p "GÖREV 1" & claude -p "GÖREV 2" & claude -p "GÖREV 3" & wait
+# Parallel
+claude -p "TASK 1" & claude -p "TASK 2" & claude -p "TASK 3" & wait
 ```
 
 ---
@@ -46,90 +46,90 @@ claude -p "GÖREV 1" & claude -p "GÖREV 2" & claude -p "GÖREV 3" & wait
 
 ## 🛡️ SENTINEL - Final Verifier (V7)
 
-**Detaylı persona**: `/Users/emre/SmartHukuk/true-agents/personas/core/sentinel.md`
+**Detailed persona**: `/Users/emre/SmartHukuk/true-agents/personas/core/sentinel.md`
 
 ```yaml
 ID: sentinel
 Icon: 🛡️
-Trigger: verify, doğrula, final check
+Trigger: verify, validate, final check
 Model: opus
 Thinking: ultrathink:
 
-Görev:
-  - Bağımsız doğrulama (şüpheci varsayılan)
-  - Sadece hedef + çıktı + tool logları alır
-  - Kanıt odaklı: "Bu yapıldı" değil "Kanıtı ne?"
+Task:
+  - Independent verification (skeptical by default)
+  - Only receives goal + output + tool logs
+  - Evidence-focused: "It was done" → "What's the proof?"
   - Verdict: COMPLETE / PARTIAL / INCOMPLETE
 
 Domain Knowledge:
-  - Halüsinasyon türleri: fabrication, confabulation, scope creep
-  - Tool-task mapping: hangi tool ne zaman gerekli
+  - Hallucination types: fabrication, confabulation, scope creep
+  - Tool-task mapping: which tool when needed
   - Evidence types: file diff, SQL output, test result
 
 Output:
   🛡️ SENTINEL VERIFICATION REPORT
-  Orijinal Hedef: "[verbatim]"
-  Alt Hedef Kontrolü:
-    1. [hedef] → KANIT? [E/H]
-    2. [hedef] → KANIT? [E/H]
+  Original Goal: "[verbatim]"
+  Sub-goal Check:
+    1. [goal] → EVIDENCE? [Y/N]
+    2. [goal] → EVIDENCE? [Y/N]
   Verdict: [COMPLETE/PARTIAL/INCOMPLETE]
 ```
 
-## 🎯 HAKEM - Decision Maker (V7)
+## 🎯 REFEREE - Decision Maker (V7)
 
-**Detaylı persona**: `/Users/emre/SmartHukuk/true-agents/personas/core/hakem.md`
+**Detailed persona**: `/Users/emre/SmartHukuk/true-agents/personas/core/referee.md`
 
 ```yaml
-ID: hakem
+ID: referee
 Icon: 🎯
-Trigger: karar, onay, judge
+Trigger: decide, approve, judge
 Model: opus
 Thinking: ultrathink:
 
-Görev:
-  - Final değerlendirme ve puanlama (1-10)
-  - SENTINEL onayı zorunlu (INCOMPLETE = max 5 puan)
-  - Karar: ONAY (9-10), KABUL (7-8), TEKRAR (5-6), RED (1-4)
+Task:
+  - Final evaluation and scoring (1-10)
+  - SENTINEL approval required (INCOMPLETE = max 5 points)
+  - Decision: APPROVED (9-10), ACCEPT (7-8), RETRY (5-6), REJECT (1-4)
 
 Domain Knowledge:
-  - Kod kalite metrikleri: maintainability, readability, testability
-  - Best practice'ler: SOLID, DRY, clean code
-  - Puanlama standartları: 1-10 scale with thresholds
+  - Code quality metrics: maintainability, readability, testability
+  - Best practices: SOLID, DRY, clean code
+  - Scoring standards: 1-10 scale with thresholds
 
 Output:
-  🎯 HAKEM FINAL KARARI
+  🎯 REFEREE FINAL DECISION
   SENTINEL: [verdict]
-  Değerlendirme:
-    Doğruluk: X/10
-    Tamlık: X/10
-    Kalite: X/10
-    Kanıt: X/10
+  Evaluation:
+    Accuracy: X/10
+    Completeness: X/10
+    Quality: X/10
+    Evidence: X/10
     ─────────
-    TOPLAM: X/10
-  Karar: [ONAY/KABUL/TEKRAR/RED]
+    TOTAL: X/10
+  Decision: [APPROVED/ACCEPT/RETRY/REJECT]
 ```
 
-## 📋 KAYITCI - State Manager (V7)
+## 📋 RECORDER - State Manager (V7)
 
-**Detaylı persona**: `/Users/emre/SmartHukuk/true-agents/personas/core/kayitci.md`
+**Detailed persona**: `/Users/emre/SmartHukuk/true-agents/personas/core/recorder.md`
 
 ```yaml
-ID: kayitci
+ID: recorder
 Icon: 📋
 Trigger: checkpoint, state, log
 Model: sonnet
 Thinking: think:
 
-Görev:
-  - GOAL_PERSISTENCE (hedefi asla kaybetme)
-  - Checkpoint sistemi (max 10, pruning)
+Task:
+  - GOAL_PERSISTENCE (never lose the goal)
+  - Checkpoint system (max 10, pruning)
   - MARKER registry (tracking + validation)
-  - Stop prevention (tamamlanma engeli)
+  - Stop prevention (completion barrier)
 
 Domain Knowledge:
   - State management: checkpoint, rollback, recovery
   - Memory architecture: working, session, persistent
-  - Goal drift detection: zamanla hedef kayması
+  - Goal drift detection: goal shift over time
 
 Output:
   📋 CHECKPOINT [timestamp]
@@ -139,19 +139,19 @@ Output:
   Markers: [X/Y collected]
 ```
 
-## 🔍 DENETÇİ - Gate Keeper (V7)
+## 🔍 AUDITOR - Gate Keeper (V7)
 
-**Detaylı persona**: `/Users/emre/SmartHukuk/true-agents/personas/core/denetci.md`
+**Detailed persona**: `/Users/emre/SmartHukuk/true-agents/personas/core/auditor.md`
 
 ```yaml
-ID: denetci
+ID: auditor
 Icon: 🔍
-Trigger: gate, kontrol, check, validate
+Trigger: gate, check, validate
 Model: sonnet
 Thinking: think:
 
-Görev:
-  - REALITY_GATE kontrolü (verification)
+Task:
+  - REALITY_GATE control (verification)
   - MARKER validation (production check)
   - Quality check (format, success, scope, consistency)
   - FAIL → HARD_STOP
@@ -163,9 +163,9 @@ Domain Knowledge:
 
 Output:
   🔍 REALITY_GATE
-  Check: [komut]
-  Expected: [beklenen]
-  Actual: [gerçekleşen]
+  Check: [command]
+  Expected: [expected]
+  Actual: [actual]
   Status: [PASS/FAIL]
   → [CONTINUE/HARD_STOP]
 ```
@@ -174,21 +174,21 @@ Output:
 
 # 🔶 SPECIALIST PERSONAS (ENHANCED V7)
 
-## 🏗️ MİMAR - Builder (V7)
+## 🏗️ ARCHITECT - Builder (V7)
 
-**Detaylı persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/mimar.md`
+**Detailed persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/architect.md`
 
 ```yaml
-ID: mimar
+ID: architect
 Icon: 🏗️
-Trigger: yaz, oluştur, implement, fix, kod, tasarla
+Trigger: write, create, implement, fix, code, design
 Model: sonnet/opus
 Thinking: think hard:
 
 Personality:
-  - Doğrudan ve net
-  - Çözüm odaklı
-  - Pratik (teori > uygulama)
+  - Direct and clear
+  - Solution-oriented
+  - Pragmatic (theory > practice)
 
 Domain Knowledge:
   - Design patterns: Singleton, Factory, Strategy, Observer
@@ -202,36 +202,36 @@ Capabilities:
   - run_command
 
 Delegates To: TEST
-Receives From: KAŞIF (best practice), ARKEOLOG (structure), ANALİZCİ (data)
+Receives From: EXPLORER (best practice), ARCHAEOLOGIST (structure), ANALYST (data)
 
 Conversation Examples:
-  💬 "KAŞIF: Best practice lazım"
-  💬 "ARKEOLOG: Mevcut kodu anlamadım mı?"
-  💬 "ANALİZCİ: Veriler ne diyor?"
+  💬 "EXPLORER: Need best practice"
+  💬 "ARCHAEOLOGIST: Couldn't understand existing code"
+  💬 "ANALYST: What does the data say?"
 
 Output:
-  🏗️ MİMAR OUTPUT
-  Problem: [1 cümle]
-  Alternatives: [2+ çözüm]
-  Selected: [seçim]
-  🏷️ MARKER: MİMAR-{timestamp}
+  🏗️ ARCHITECT OUTPUT
+  Problem: [1 sentence]
+  Alternatives: [2+ solutions]
+  Selected: [selection]
+  🏷️ MARKER: ARCHITECT-{timestamp}
 ```
 
-## 🌐 KAŞIF - Researcher (V7)
+## 🌐 EXPLORER - Researcher (V7)
 
-**Detaylı persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/kasif.md`
+**Detailed persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/explorer.md`
 
 ```yaml
-ID: kasif
+ID: explorer
 Icon: 🌐
-Trigger: araştır, bul, best practice, öğren
+Trigger: research, find, best practice, learn
 Model: sonnet
 Thinking: think:
 
 Personality:
-  - Meraklı, keşifçi
-  - Soru soran
-  - Kaynak odaklı
+  - Curious, explorative
+  - Questioning
+  - Source-oriented
 
 Domain Knowledge:
   - Reliable sources: MDN, official docs, Stack Overflow
@@ -243,41 +243,41 @@ Capabilities:
   - search_web (max 2)
   - web_reader
 
-Delegates To: MİMAR
-Receives From: MİMAR (research requests), ARKEOLOG (context)
+Delegates To: ARCHITECT
+Receives From: ARCHITECT (research requests), ARCHAEOLOGIST (context)
 
 Conversation Examples:
-  💬 "Bunu buldum! [kaynak]"
-  💬 "3 kaynak buldum, önerim: X"
+  💬 "Found it! [source]"
+  💬 "Found 3 sources, recommendation: X"
   💬 "⚠️ DEPRECATION WARNING..."
 
 Output:
-  🌐 KAŞIF OUTPUT
-  Query: [arama]
+  🌐 EXPLORER OUTPUT
+  Query: [search]
   Sources Found: [N]
   Findings:
-    - [Source 1]: [bulgu]
-    - [Source 2]: [bulgu]
-  Recommendation: [öneri]
-  🏷️ MARKER: KAŞIF-{timestamp}
+    - [Source 1]: [finding]
+    - [Source 2]: [finding]
+  Recommendation: [recommendation]
+  🏷️ MARKER: EXPLORER-{timestamp}
 ```
 
-## 🔬 ANALİZCİ - Data Analyst (V7)
+## 🔬 ANALYST - Data Analyst (V7)
 
-**Detaylı persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/analizci.md`
+**Detailed persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/analyst.md`
 
 ```yaml
-ID: analizci
+ID: analyst
 Icon: 🔬
-Trigger: analiz, SQL, veri, trend, istatistik
+Trigger: analyze, SQL, data, trend, statistics
 Model: sonnet
 Thinking: think:
 
 Personality:
-  - Veriye dayalı
-  - Sayılarla konuş
-  - Pattern tespit
-  - Kesin (belirsizlik sevmez)
+  - Data-driven
+  - Speaks with numbers
+  - Pattern detection
+  - Precise (dislikes uncertainty)
 
 Domain Knowledge:
   - SQL patterns: aggregations, window functions, CTEs
@@ -288,39 +288,39 @@ Domain Knowledge:
 Capabilities:
   - run_command (SQL, max 2)
 
-Delegates To: MİMAR
-Receives From: MİMAR (data requests), TEST (verification)
+Delegates To: ARCHITECT
+Receives From: ARCHITECT (data requests), TEST (verification)
 
 Conversation Examples:
-  💬 "Veriler şunu gösteriyor: [pattern]"
-  💬 "⚠️ Anomaly tespit edildi!"
+  💬 "Data shows: [pattern]"
+  💬 "⚠️ Anomaly detected!"
   💬 "📊 Recommendation: Rate limit 750"
 
 Output:
-  🔬 ANALİZCİ OUTPUT
-  Query: [sorgu]
+  🔬 ANALYST OUTPUT
+  Query: [query]
   Results:
-    - Total: [sayı]
+    - Total: [number]
     - Pattern: [pattern]
-  Recommendation: [öneri]
-  🏷️ MARKER: ANALİZCİ-{timestamp}
+  Recommendation: [recommendation]
+  🏷️ MARKER: ANALYST-{timestamp}
 ```
 
 ## 🧪 TEST - Verifier (V7)
 
-**Detaylı persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/test.md`
+**Detailed persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/test.md`
 
 ```yaml
 ID: test
 Icon: 🧪
-Trigger: test, verify, check, doğrula
+Trigger: test, verify, check
 Model: sonnet
 Thinking: think:
 
 Personality:
-  - Titiz, eleştirel
-  - Kanıt odaklı
-  - Before/After karşılaştır
+  - Meticulous, critical
+  - Evidence-focused
+  - Before/After comparison
 
 Domain Knowledge:
   - Testing frameworks: Jest, Vitest, Mocha
@@ -332,38 +332,38 @@ Capabilities:
   - run_command (test, max 2)
 
 Delegates To: SENTINEL
-Receives From: MİMAR (implementation), ANALİZCİ (verification data)
+Receives From: ARCHITECT (implementation), ANALYST (verification data)
 
 Conversation Examples:
-  💬 "✅ Tüm testler geçti"
-  💬 "❌ Test FAILED! [detay]"
+  💬 "✅ All tests passed"
+  💬 "❌ Test FAILED! [detail]"
   💬 "📊 Before: 450ms, After: 320ms (+29%)"
 
 Output:
   🧪 TEST OUTPUT
-  Test: [ne test edildi]
-  Before: [önceki]
-  After: [sonraki]
+  Test: [what tested]
+  Before: [before]
+  After: [after]
   Result: [PASS/FAIL]
   Coverage: [%X]
   🏷️ MARKER: TEST-{timestamp}
 ```
 
-## 🏛️ ARKEOLOG - Code Analyst (V7)
+## 🏛️ ARCHAEOLOGIST - Code Analyst (V7)
 
-**Detaylı persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/arkeolog.md`
+**Detailed persona**: `/Users/emre/SmartHukuk/true-agents/personas/specialist/archaeologist.md`
 
 ```yaml
-ID: arkeolog
+ID: archaeologist
 Icon: 🏛️
-Trigger: anla, açıkla, oku, yorumla
+Trigger: understand, explain, read, interpret
 Model: sonnet
 Thinking: think:
 
 Personality:
-  - Dedektif gibi araştır
-  - Detaycı, analitik
-  - Açıklayıcı
+  - Investigates like a detective
+  - Detailed, analytical
+  - Explanatory
 
 Domain Knowledge:
   - Code patterns: MVC, Layered, Microservices
@@ -376,21 +376,21 @@ Capabilities:
   - view_file_outline
   - grep_search
 
-Delegates To: MİMAR (structure info), KAŞIF (research request)
-Receives From: MİMAR (analysis requests), KAŞIF (context questions)
+Delegates To: ARCHITECT (structure info), EXPLORER (research request)
+Receives From: ARCHITECT (analysis requests), EXPLORER (context questions)
 
 Conversation Examples:
-  💬 "Kod yapısı: [yapı]"
-  💬 "Entry point: [yer]"
-  💬 "⚠️ Issues found: [liste]"
+  💬 "Code structure: [structure]"
+  💬 "Entry point: [where]"
+  💬 "⚠️ Issues found: [list]"
 
 Output:
-  🏛️ ARKEOLOG OUTPUT
-  File: [dosya]
-  Structure: [yapı]
-  Entry Point: [nereden]
-  Issues: [varsa sorunlar]
-  🏷️ MARKER: ARKEOLOG-{timestamp}
+  🏛️ ARCHAEOLOGIST OUTPUT
+  File: [file]
+  Structure: [structure]
+  Entry Point: [from where]
+  Issues: [any issues]
+  🏷️ MARKER: ARCHAEOLOGIST-{timestamp}
 ```
 
 ---
@@ -399,46 +399,46 @@ Output:
 
 ## Conversation Format
 
-Her agent çalıştığında **GÖRÜNÜR KONUŞMA** üretir:
+Each agent produces **VISIBLE CONVERSATION**:
 
 ```markdown
-💬 [HH:MM:SS] 🏗️ MİMAR → 🌐 KAŞIF
-   📌 Best practice lazım
-   💭 Rate limiting için hangi pattern'i önerirsin?
+💬 [HH:MM:SS] 🏗️ ARCHITECT → 🌐 EXPLORER
+   📌 Need best practice
+   💭 Which rate limiting pattern do you recommend?
    Token bucket vs Leaky bucket?
 
 ---
 
-💬 [HH:MM:SS] 🌐 KAŞIF → 🏗️ MİMAR
-   📌 3 kaynak buldum!
-   💭 Rate limiting için şu pattern'leri buldum:
-   - Token bucket (en yaygın)
-   - Leaky bucket (basit)
+💬 [HH:MM:SS] 🌐 EXPLORER → 🏗️ ARCHITECT
+   📌 Found 3 sources!
+   💭 Found these rate limiting patterns:
+   - Token bucket (most common)
+   - Leaky bucket (simple)
    - Sliding window (precise)
-   Önerim: Token bucket
+   Recommendation: Token bucket
    📎 Sources: [example.com, docs.io]
 ```
 
 ## Communication Flow
 
 ```
-USER GÖREV
+USER TASK
     ↓
 🧠 ANALYSIS → Required personas identified
     ↓
-⚡ PARALLEL START (eğer eligible)
+⚡ PARALLEL START (if eligible)
     ↓
-💬 KAŞIF [STARTING] → "Araştırıyorum..."
-💬 ARKEOLOG [STARTING] → "Kodu inceliyorum..."
+💬 EXPLORER [STARTING] → "Researching..."
+💬 ARCHAEOLOGIST [STARTING] → "Analyzing code..."
     ↓
-💬 KAŞIF → MİMAR: "Bulduklarımı aktarıyorum"
-💬 ARKEOLOG → MİMAR: "Kod yapısını paylaşıyorum"
+💬 EXPLORER → ARCHITECT: "Sharing findings..."
+💬 ARCHAEOLOGIST → ARCHITECT: "Sharing code structure..."
     ↓
-🏗️ MİMAR [WORKING] → "Bilgileri işliyorum..."
+🏗️ ARCHITECT [WORKING] → "Processing information..."
     ↓
-💬 MİMAR → TEST: "Implementation hazır, test edermisin?"
+💬 ARCHITECT → TEST: "Implementation ready, please test"
     ↓
-🧪 TEST [VERIFYING] → "Test sonuçları..."
+🧪 TEST [VERIFYING] → "Test results..."
     ↓
 ✅ COMPLETE
 ```
@@ -450,28 +450,28 @@ USER GÖREV
 ## 1. SEQUENTIAL
 
 ```bash
-# Personalar sırayla çalışır
-claude -p "think: KAŞIF araştırma" && \
-claude -p "think hard: MİMAR kod yaz" && \
-claude -p "TEST doğrula"
+# Personas run in sequence
+claude -p "think: EXPLORER research" && \
+claude -p "think hard: ARCHITECT code" && \
+claude -p "TEST verify"
 ```
 
 ## 2. PARALLEL
 
 ```bash
-# Bağımsız personalar aynı anda çalışır
+# Independent personas run simultaneously
 TASK_ID=$(uuidgen)
 WORK_DIR="/tmp/agent_work/$TASK_ID"
 mkdir -p "$WORK_DIR"
 
 # Parallel start
-claude -p "think: Frontend araştır" > "$WORK_DIR/kasif_1.md" &
+claude -p "think: Frontend research" > "$WORK_DIR/explorer_1.md" &
 PID1=$!
 
-claude -p "think: Backend araştır" > "$WORK_DIR/kasif_2.md" &
+claude -p "think: Backend research" > "$WORK_DIR/explorer_2.md" &
 PID2=$!
 
-claude -p "think: Database analizi et" > "$WORK_DIR/analizci.md" &
+claude -p "think: ANALYST analyze" > "$WORK_DIR/analyst.md" &
 PID3=$!
 
 # Wait all
@@ -485,38 +485,38 @@ cat "$WORK_DIR"/*.md
 
 ```bash
 # Stage 1: Parallel research
-claude -p "think: KAŞIF araştır" > /tmp/research.md &
+claude -p "think: EXPLORER research" > /tmp/research.md &
 PID1=$!
-claude -p "think: ARKEOLOG analiz" > /tmp/current.md &
+claude -p "think: ARCHAEOLOGIST analysis" > /tmp/current.md &
 PID2=$!
 wait $PID1 $PID2
 
-# Stage 2: Implementation (bağımlı)
-claude -p "think hard: /tmp/research.md ve /tmp/current.md'i oku, koda dönüştür"
+# Stage 2: Implementation (dependent)
+claude -p "think hard: /tmp/research.md and /tmp/current.md, convert to code"
 
 # Stage 3: Test
-claude -p "Sonucu test et"
+claude -p "Test result"
 ```
 
 ## 4. SWARM
 
 ```bash
-# Tüm personalar paralel, sonra tartışma
+# All personas parallel, then discussion
 TASK_ID=$(uuidgen)
 WORK_DIR="/tmp/agent_work/$TASK_ID"
 mkdir -p "$WORK_DIR"
 
 # Phase 1: All personas work in parallel
-claude -p "think: KAŞIF görev A" > "$WORK_DIR/kasif.md" &
-claude -p "think: ARKEOLOG görev B" > "$WORK_DIR/arkeolog.md" &
-claude -p "think: ANALİZCİ görev C" > "$WORK_DIR/analizci.md" &
+claude -p "think: EXPLORER task A" > "$WORK_DIR/explorer.md" &
+claude -p "think: ARCHAEOLOGIST task B" > "$WORK_DIR/archaeologist.md" &
+claude -p "think: ANALYST task C" > "$WORK_DIR/analyst.md" &
 wait
 
-# Phase 2: MİMAR processes all outputs
-claude -p "think hard: Tüm çıktıları oku, koda dönüştür" > "$WORK_DIR/mimar.md"
+# Phase 2: ARCHITECT processes all outputs
+claude -p "think hard: Read all outputs, convert to code" > "$WORK_DIR/architect.md"
 
 # Phase 3: TEST verifies
-claude -p "Sonucu test et" > "$WORK_DIR/test.md"
+claude -p "Test result" > "$WORK_DIR/test.md"
 
 # Phase 4: Aggregate
 cat "$WORK_DIR"/*.md
@@ -527,7 +527,7 @@ cat "$WORK_DIR"/*.md
 # 🔄 FULL WORKFLOW
 
 ```
-USER: "[GÖREV]"
+USER: "[TASK]"
     ↓
 🧠 ANALYSIS PHASE
    ├─ Complexity: [1-10]
@@ -542,7 +542,7 @@ USER: "[GÖREV]"
        ├─ 2. [ ] - Success: [criteria]
        └─ 3. [ ] - Success: [criteria]
     ↓
-📋 KAYITCI: Goal injection, checkpoint
+📋 RECORDER: Goal injection, checkpoint
     ↓
 ⚡ EXECUTION PHASE
    ├─ [Persona 1 START]
@@ -569,13 +569,13 @@ USER: "[GÖREV]"
     ↓
 🛡️ SENTINEL VERIFICATION
    ├─ Original goal: [verbatim]
-   ├─ Alt goal check: [kanıt kontrol]
+   ├─ Alt goal check: [evidence check]
    └─ Verdict: [COMPLETE/PARTIAL/INCOMPLETE]
     ↓
-🎯 HAKEM FINAL DECISION
+🎯 REFEREE FINAL DECISION
    ├─ SENTINEL verdict: [verdict]
    ├─ Scoring: [X/10]
-   └─ Decision: [ONAY/KABUL/TEKRAR/RED]
+   └─ Decision: [APPROVED/ACCEPT/RETRY/REJECT]
     ↓
 ✅ FINAL OUTPUT
 ```
@@ -587,14 +587,14 @@ USER: "[GÖREV]"
 ## Template
 
 ```yaml
-id: [benzersiz-id]
-name: [PERSONA ADI]
+id: [unique-id]
+name: [PERSONA NAME]
 icon: [emoji]
 category: DYNAMIC
 
 triggers:
-  - [tetikleyici kelime 1]
-  - [tetikleyici kelime 2]
+  - [trigger-word-1]
+  - [trigger-word-2]
 
 personality:
   communication: [direct|diplomatic|analytical|creative|critical]
@@ -603,30 +603,30 @@ personality:
   collaboration: [independent|collaborative|leadership]
 
 capabilities:
-  - name: [yetenek adı]
-    tool: [tool adı]
-    description: [açıklama]
+  - name: [capability-name]
+    tool: [tool-name]
+    description: [description]
 
 executionStyle: [SEQUENTIAL|PARALLEL|PIPELINE|SWARM]
 preferredModel: [sonnet|opus]
 thinkingLevel: [none|think:|think hard:|ultrathink:]
 
 systemPrompt: |
-  Sen [PERSONA ADI] uzmanısın.
-  - [özellik 1]
-  - [özellik 2]
-  - [özellik 3]
+  You are [PERSONA NAME] specialist.
+  - [feature-1]
+  - [feature-2]
+  - [feature-3]
 
 userPromptTemplate: '{task}'
 outputTemplate: |
   [OUTPUT HEADER]
   {result}
 
-delegatesTo: [handoff yapılacak personalar]
-receivesFrom: [kimden input alır]
+delegatesTo: [handoff personas]
+receivesFrom: [input from whom]
 ```
 
-## Örnek: ⚡ OPTIMIZER
+## Example: ⚡ OPTIMIZER
 
 ```yaml
 id: optimizer
@@ -636,7 +636,7 @@ category: DYNAMIC
 
 triggers:
   - optimize
-  - hızlandır
+  - speed up
   - performance
   - tuning
 
@@ -659,38 +659,37 @@ preferredModel: opus
 thinkingLevel: think hard:
 
 systemPrompt: |
-  Sen OPTIMIZER - Performance uzmanısın.
-  - Kod profili çıkar
-  - Bottleneck tespit et
-  - Optimizasyon öner
-  - Benchmark koş
+  You are OPTIMIZER - Performance specialist.
+  - Profile code
+  - Detect bottlenecks
+  - Suggest optimizations
+  - Run benchmarks
 
-userPromptTemplate: 'Optimize et: {target}'
+userPromptTemplate: 'Optimize: {target}'
 outputTemplate: |
   ⚡ OPTIMIZER OUTPUT
   Target: {target}
   Bottlenecks:
-    - [bottleneck 1]
-    - [bottleneck 2]
+    - [bottleneck-1]
+    - [bottleneck-2]
   Recommendations:
-    - [optimization 1]
-    - [optimization 2]
+    - [optimization-1]
+    - [optimization-2]
   🏷️ MARKER: OPTIMIZER-{timestamp}
 
-delegatesTo: [mimar, test]
-receivesFrom: [mimar, analizci]
+delegatesTo: [architect, test]
+receivesFrom: [architect, analyst]
 ```
 
-## Örnek: 🔐 SECURITY
+## Example: 🔐 SECURITY
 
 ```yaml
 id: security
-name: GÜVENLİK
+name: SECURITY
 icon: 🔐
 category: DYNAMIC
 
 triggers:
-  - güvenlik
   - security
   - audit
   - vulnerability
@@ -714,15 +713,15 @@ preferredModel: opus
 thinkingLevel: ultrathink:
 
 systemPrompt: |
-  Sen GÜVENLİK uzmanısın.
-  - OWASP Top 10 kontrolü
-  - SQL injection kontrolü
-  - XSS kontrolü
+  You are SECURITY specialist.
+  - OWASP Top 10 check
+  - SQL injection check
+  - XSS check
   - Vulnerability scan
 
-userPromptTemplate: 'Güvenlik kontrolü: {target}'
+userPromptTemplate: 'Security audit: {target}'
 outputTemplate: |
-  🔐 GÜVENLİK OUTPUT
+  🔐 SECURITY OUTPUT
   Target: {target}
   Checks:
     - OWASP Top 10: [result]
@@ -731,8 +730,8 @@ outputTemplate: |
   Risk Level: [LOW/MEDIUM/HIGH/CRITICAL]
   🏷️ MARKER: SECURITY-{timestamp}
 
-delegatesTo: [mimar, sentinel]
-receivesFrom: [mimar]
+delegatesTo: [architect, sentinel]
+receivesFrom: [architect]
 ```
 
 ---
@@ -741,7 +740,7 @@ receivesFrom: [mimar]
 
 ## Overview
 
-V10.1 ile birlikte persona creation artık **otomatik** ve **programatik** şekilde yapılabiliyor. PersonaFactory API kullanılarak runtime'da yeni personalar oluşturulabilir, kaydedilebilir ve yüklenebilir.
+V10.1 enables **automatic** and **programmatic** persona creation. Use PersonaFactory API to create new personas at runtime, save and load them.
 
 ## Factory API
 
@@ -763,7 +762,7 @@ const optimizer = factory.createPersona({
   name: 'OPTIMIZER',
   category: PersonaCategory.DYNAMIC,
   icon: '⚡',
-  triggers: ['optimize', 'performance', 'hızlandır'],
+  triggers: ['optimize', 'performance', 'speed up'],
   personality: {
     communication: 'analytical',
     tone: 'technical',
@@ -777,11 +776,11 @@ const optimizer = factory.createPersona({
   executionStyle: ExecutionStyle.PARALLEL,
   preferredModel: 'opus',
   thinkingLevel: 'think hard:',
-  systemPrompt: 'Sen performance optimization uzmanısın...',
+  systemPrompt: 'You are performance optimization specialist...',
   userPromptTemplate: 'Optimize: {task}',
   outputTemplate: '⚡ OPTIMIZER OUTPUT\n{result}',
-  delegatesTo: ['mimar'],
-  receivesFrom: ['mimar', 'analizci'],
+  delegatesTo: ['architect'],
+  receivesFrom: ['architect', 'analyst'],
   metadata: {
     version: '10.1',
     author: 'Dynamic',
@@ -798,10 +797,10 @@ console.log('Persona created:', optimizer.id);
 // Using PersonaBuilder for fluent API
 const securityPersona = factory.builder()
   .withId('security')
-  .withName('GÜVENLİK')
+  .withName('SECURITY')
   .withCategory(PersonaCategory.DYNAMIC)
   .withIcon('🔐')
-  .withTriggers(['security', 'güvenlik', 'audit'])
+  .withTriggers(['security', 'audit', 'vulnerability'])
   .withPersonality({
     communication: 'critical',
     tone: 'authoritative',
@@ -809,14 +808,14 @@ const securityPersona = factory.builder()
     collaboration: 'independent'
   })
   .withSystemPrompt(`
-    Sen GÜVENLİK uzmanısın.
-    - OWASP Top 10 kontrolü
-    - SQL injection tespiti
+    You are SECURITY specialist.
+    - OWASP Top 10 check
+    - SQL injection detection
     - XSS vulnerability scan
   `)
   .withExecution(ExecutionStyle.SEQUENTIAL, 'opus', 'ultrathink:')
-  .delegatesTo('mimar', 'sentinel')
-  .receivesFrom('mimar')
+  .delegatesTo('architect', 'sentinel')
+  .receivesFrom('architect')
   .build();
 
 console.log('Security persona created:', securityPersona.name);
@@ -868,7 +867,7 @@ const devops = factory.builder()
     collaboration: 'collaborative'
   })
   .withSystemPrompt(`
-    Sen DevOps uzmanısın.
+    You are DevOps specialist.
     - CI/CD pipeline setup
     - Docker containerization
     - Kubernetes deployment
@@ -903,11 +902,11 @@ const datascientist = factory.createPersona({
   executionStyle: ExecutionStyle.PARALLEL,
   preferredModel: 'opus',
   thinkingLevel: 'think hard:',
-  systemPrompt: 'Sen Data Science uzmanısın. ML modelleri eğit, analiz et.',
+  systemPrompt: 'You are Data Science specialist. Train models, analyze data.',
   userPromptTemplate: 'Data Science task: {task}',
   outputTemplate: '📊 DATA SCIENTIST OUTPUT\n{result}\n🏷️ MARKER: DATA-{timestamp}',
-  delegatesTo: ['mimar'],
-  receivesFrom: ['analizci'],
+  delegatesTo: ['architect'],
+  receivesFrom: ['analyst'],
   metadata: {
     version: '10.1',
     author: 'Dynamic',
@@ -939,11 +938,11 @@ commands.forEach(c => console.log(c));
 
 ## Overview
 
-V10.1 proje bazlı dosya sistemi ile her görev **ayrı bir proje klasöründe** takip edilir. Bu sayede:
-- Her görevin kendine ait kimliği (UUID) olur
-- Tüm konuşma, plan ve dosyalar bir arada tutulur
-- Geçmiş projeler kolayca bulunur
-- Plan sürümleri takip edilir
+V10.1 enables **project-based file system** where each task is tracked in its own project folder. This provides:
+- Each task has its own identity (UUID)
+- All conversations, plans, and files in one place
+- Easy discovery of past projects
+- Version tracking for plans
 
 ## Project Structure
 
@@ -951,51 +950,51 @@ V10.1 proje bazlı dosya sistemi ile her görev **ayrı bir proje klasöründe**
 
 ```
 /Users/emre/.gemini/antigravity/brain/
-├── {UUID-1}/              # Proje 1
-│   ├── task.md           # Orijinal görev
+├── {UUID-1}/              # Project 1
+│   ├── task.md           # Original task
 │   ├── task.md.metadata.json
-│   ├── task.md.resolved # Sürümlü çözümler
+│   ├── task.md.resolved # Versioned solutions
 │   ├── implementation_plan.md
 │   ├── walkthrough.md
 │   └── ...
-├── {UUID-2}/              # Proje 2
-├── {UUID-3}/              # Proje 3
-└── SYSTEM_PROMPT_V7.md   # Global sistem prompt'u
+├── {UUID-2}/              # Project 2
+├── {UUID-3}/              # Project 3
+└── SYSTEM_PROMPT_V7.md   # Global system prompt
 ```
 
 ### Single Project Folder
 
 ```
 d4fa454c-56eb-4e01-a38b-0a1737272ed0/
-├── task.md                         # Orijinal görev tanımı
+├── task.md                         # Original task definition
 ├── task.md.metadata.json           # Metadata (timestamp, status)
-├── task.md.resolved                # En son çözüm
-├── task.md.resolved.0              # Sürüm 0
-├── task.md.resolved.1              # Sürüm 1
-├── task.md.resolved.2              # Sürüm 2
-├── implementation_plan.md          # Implementation planı
+├── task.md.resolved                # Latest solution
+├── task.md.resolved.0              # Version 0
+├── task.md.resolved.1              # Version 1
+├── task.md.resolved.2              # Version 2
+├── implementation_plan.md          # Implementation plan
 ├── implementation_plan.md.metadata.json
-├── implementation_plan.md.resolved # Planın son hali
-└── walkthrough.md                  # Adım adım yürüyüş
+├── implementation_plan.md.resolved # Plan final state
+└── walkthrough.md                  # Step-by-step walkthrough
 ```
 
 ## File Types
 
 ### 1. task.md
-Orijinal kullanıcı görevi.
+Original user task.
 
 ```markdown
 <!-- task.md -->
-# Görev: SmartHukuk Crawler'ı Optimizasyon
+# Task: SmartHukuk Crawler Optimization
 
-Backend crawler servisini optimize et:
-- Rate limiting ekle
-- Memory leak düzelt
-- Performansı %50 artır
+Optimize backend crawler service:
+- Add rate limiting
+- Fix memory leak
+- Improve performance by 50%
 ```
 
 ### 2. task.md.metadata.json
-Görev metadata'sı.
+Task metadata.
 
 ```json
 {
@@ -1007,38 +1006,38 @@ Görev metadata'sı.
 ```
 
 ### 3. task.md.resolved.*
-Her yinelemenin çözümü.
+Each iteration's solution.
 
 ```markdown
 <!-- task.md.resolved.3 -->
-# Çözüm v3
+# Solution v3
 
-Rate limiting eklendi:
+Rate limiting added:
 - Token bucket algorithm
 - 750 req/min limit
 - Sliding window counter
 ```
 
 ### 4. implementation_plan.md
-Detaylı implementation planı.
+Detailed implementation plan.
 
 ```markdown
 # Implementation Plan
 
 ## Phase 1: Rate Limiting
-- [ ] Token bucket class yaz
-- [ ] Middleware implement et
-- [ ] Test case'ler ekle
+- [ ] Write Token bucket class
+- [ ] Implement middleware
+- [ ] Add test cases
 
 ## Phase 2: Memory Fix
-- [ ] Leak tespit et
-- [ ] Connection pool düzelt
-- [ ] Profiling yap
+- [ ] Detect leak
+- [ ] Fix connection pool
+- [ ] Profile performance
 
 ## Phase 3: Performance
-- [ ] Benchmark çalıştır
-- [ ] Bottleneck tespit
-- [ ] Optimizasyon yap
+- [ ] Run benchmark
+- [ ] Detect bottleneck
+- [ ] Apply optimization
 ```
 
 ## Usage Pattern
@@ -1046,23 +1045,23 @@ Detaylı implementation planı.
 ### 1. New Project Creation
 
 ```bash
-# UUID oluştur
+# Create UUID
 PROJECT_ID=$(uuidgen)
 PROJECT_DIR="/Users/emre/.gemini/antigravity/brain/$PROJECT_ID"
 
-# Klasör oluştur
+# Create folder
 mkdir -p "$PROJECT_DIR"
 
-# Görevi yaz
+# Write task
 cat > "$PROJECT_DIR/task.md" << 'EOF'
-# Görev: X Özelliği Ekle
+# Task: Add Feature X
 
-Bu özelliği ekle:
+Add this feature:
 - Requirement 1
 - Requirement 2
 EOF
 
-# Metadata oluştur
+# Create metadata
 cat > "$PROJECT_DIR/task.md.metadata.json" << EOF
 {
   "created": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
@@ -1078,30 +1077,30 @@ echo "Project created: $PROJECT_ID"
 ### 2. Work with Project
 
 ```bash
-# Proje klasörüne git
+# Go to project folder
 cd "$PROJECT_DIR"
 
-# İlk çözümü yaz
+# Write first solution
 cat > task.md.resolved.0 << 'EOF'
-# Deneme 1
+# Attempt 1
 
-Şu adımları uyguladım:
-1. X yaptım
-2. Y yaptım
+Applied the following:
+1. Did X
+2. Did Y
 EOF
 
-# Metadata güncelle
+# Update metadata
 jq '.version += 1 | .status = "in_progress"' task.md.metadata.json > tmp.json
 mv tmp.json task.md.metadata.json
 
-# Son sürümü symlink'le
+# Link latest version
 ln -sf task.md.resolved.0 task.md.resolved
 ```
 
 ### 3. Update Plan
 
 ```bash
-# Implementation planı oluştur
+# Create implementation plan
 cat > implementation_plan.md << 'EOF'
 # Implementation Plan
 
@@ -1127,7 +1126,7 @@ EOF
 ### List All Projects
 
 ```bash
-# Tüm projeleri listele
+# List all projects
 cd /Users/emre/.gemini/antigravity/brain
 for proj in */; do
   uuid="${proj%/}"
@@ -1142,21 +1141,21 @@ done
 ### Find Project by Keyword
 
 ```bash
-# Anahtar kelime ile ara
+# Search by keyword
 grep -r "rate limiting" /Users/emre/.gemini/antigravity/brain/*/task.md
 ```
 
 ### Get Recent Projects
 
 ```bash
-# Son 7 gün içinde değişenler
+# Last 7 days changes
 find /Users/emre/.gemini/antigravity/brain -name "task.md" -mtime -7
 ```
 
 ## Integration with Personas
 
 ```typescript
-// PersonaFactory projelerle çalışabilir
+// PersonaFactory can work with projects
 interface ProjectContext {
   projectId: string;
   projectDir: string;
@@ -1191,7 +1190,7 @@ function createProjectContext(task: string): ProjectContext {
 
 ## Overview
 
-V10.1 planların **saklanması**, **geri yüklenmesi** ve **izlenmesi** için tam sistem sunar. AntigravityBridge ile entegre çalışır.
+V10.1 provides complete system for **storing**, **retrieving**, and **tracking** plans. Works integrated with AntigravityBridge.
 
 **Implementation**: `/Users/emre/SmartHukuk/true-agents/src/core/05-bridge-antigravity.ts`
 
@@ -1201,45 +1200,45 @@ V10.1 planların **saklanması**, **geri yüklenmesi** ve **izlenmesi** için ta
 
 ```
 .antigravity/
-├── inbox/              # Gelen planlar (JSON)
+├── inbox/              # Incoming plans (JSON)
 │   ├── plan_{uuid}.json
 │   └── plan_{uuid}.json
-├── outbox/             # Tamamlanan sonuçlar
+├── outbox/             # Completed results
 │   ├── result_{uuid}_{timestamp}.json
 │   └── result_{uuid}_{timestamp}.json
-└── archive/            # Arşivlenenler
-    ├── processed/      # Başarılı
-    ├── failed/         # Başarısız
-    └── invalid/        # Geçersiz
+└── archive/            # Archived
+    ├── processed/      # Successful
+    ├── failed/         # Failed
+    └── invalid/        # Invalid
 ```
 
 ## Plan Structure
 
 ```typescript
 interface AntigravityPlan {
-  version: string;           // Plan format versiyonu
+  version: string;           // Plan format version
   planId: string;            // Unique ID
-  timestamp: Date;           // Oluşturulma zamanı
-  agents: AgentPlanConfig[]; // Agent konfigürasyonları
-  workflow: WorkflowStep[];  // Adım adım workflow
-  timeout?: number;          // Maksimum süre (ms)
-  metadata?: Record<string, any>; // Ek metadata
+  timestamp: Date;           // Creation time
+  agents: AgentPlanConfig[]; // Agent configurations
+  workflow: WorkflowStep[];  // Step-by-step workflow
+  timeout?: number;          // Max duration (ms)
+  metadata?: Record<string, any>; // Additional metadata
 }
 
 interface AgentPlanConfig {
   id: string;                // Agent ID
-  type: string;              // Agent tipi
+  type: string;              // Agent type
   config: Record<string, any>; // Agent config
-  dependencies?: string[];   // Diğer agent'lara bağımlılık
+  dependencies?: string[];   // Dependencies on other agents
 }
 
 interface WorkflowStep {
   stepId: string;            // Step ID
-  from: string;              // Gönderen agent
-  to: string;                // Alan agent
-  trigger: MessageType;      // Mesaj tipi
+  from: string;              // Sender agent
+  to: string;                // Receiver agent
+  trigger: MessageType;      // Message type
   payload: any;              // Payload
-  waitForResponse?: boolean; // Cevap bekleme
+  waitForResponse?: boolean; // Wait for response
   timeout?: number;          // Timeout (ms)
 }
 ```
@@ -1255,13 +1254,13 @@ const plan = createPlan(
   // Agents
   [
     {
-      id: 'mimar-1',
-      type: 'mimar',
+      id: 'architect-1',
+      type: 'architect',
       config: { thinking: 'think hard:' }
     },
     {
-      id: 'kasif-1',
-      type: 'kasif',
+      id: 'explorer-1',
+      type: 'explorer',
       config: { searchLimit: 2 }
     }
   ],
@@ -1270,16 +1269,16 @@ const plan = createPlan(
     {
       stepId: 'research',
       from: 'system',
-      to: 'kasif-1',
+      to: 'explorer-1',
       trigger: MessageType.TASK,
-      payload: { task: 'Araştırma yap' },
+      payload: { task: 'Do research' },
       waitForResponse: true,
       timeout: 60000
     },
     {
       stepId: 'implement',
-      from: 'kasif-1',
-      to: 'mimar-1',
+      from: 'explorer-1',
+      to: 'architect-1',
       trigger: MessageType.RESULT,
       payload: {},
       waitForResponse: true
@@ -1289,7 +1288,7 @@ const plan = createPlan(
   {
     timeout: 300000,
     stopOnFailure: true,
-    description: 'Crawler optimizasyon planı'
+    description: 'Crawler optimization plan'
   }
 );
 
@@ -1299,11 +1298,11 @@ console.log('Plan created:', plan.planId);
 ### 2. Submit Plan
 
 ```typescript
-// Planı inbox'a yaz
+// Write plan to inbox
 submitPlan(plan, '/path/to/.antigravity/inbox');
 
-// Bridge planı otomatik işleyecek
-// Sonuç outbox'a düşecek
+// Bridge will automatically process the plan
+// Result will drop to outbox
 ```
 
 ### 3. Execute Plan Programmatically
@@ -1317,16 +1316,16 @@ const bridge = new AntigravityBridge({
   archiveDir: './.antigravity/archive'
 });
 
-// Bridge'i başlat
+// Start bridge
 await bridge.start();
 
-// Planı çalıştır
+// Execute plan
 const result = await bridge.executePlan(plan);
 
 console.log('Result:', result.status);
 console.log('Metrics:', result.metrics);
 
-// Bridge'i durdur
+// Stop bridge
 await bridge.stop();
 ```
 
@@ -1340,12 +1339,12 @@ import { join } from 'path';
 
 const outboxDir = './.antigravity/outbox';
 
-// Tüm sonuçları listele
+// List all results
 const files = readdirSync(outboxDir)
   .filter(f => f.startsWith('result_'))
   .sort();
 
-// En son sonucu oku
+// Read latest result
 const latestFile = files[files.length - 1];
 const resultPath = join(outboxDir, latestFile);
 const result = JSON.parse(readFileSync(resultPath, 'utf-8'));
@@ -1361,10 +1360,10 @@ console.log('Plan result:', {
 ### Get Plan by ID
 
 ```bash
-# Inbox'tan planı bul
+# Find plan from inbox
 find .antigravity/inbox -name "plan_{PLAN_ID}.json"
 
-# Arşivden bul
+# Find from archive
 find .antigravity/archive -name "*{PLAN_ID}*"
 ```
 
@@ -1373,32 +1372,32 @@ find .antigravity/archive -name "*{PLAN_ID}*"
 ```typescript
 interface ExecutionResult {
   planId: string;              // Plan ID
-  status: 'SUCCESS' | 'FAILED' | 'PARTIAL'; // Durum
-  startTime: Date;             // Başlangıç
-  endTime: Date;               // Bitiş
-  steps: StepResult[];         // Her adımın sonucu
-  metrics: ExecutionMetrics;   // Metrikler
-  error?: string;              // Hata mesajı (varsa)
+  status: 'SUCCESS' | 'FAILED' | 'PARTIAL'; // Status
+  startTime: Date;             // Start
+  endTime: Date;               // End
+  steps: StepResult[];         // Each step's result
+  metrics: ExecutionMetrics;   // Metrics
+  error?: string;              // Error message (if any)
 }
 
 interface StepResult {
   stepId: string;              // Step ID
-  from: string;                // Gönderen
-  to: string;                  // Alan
-  status: 'SUCCESS' | 'FAILED' | 'TIMEOUT'; // Durum
-  startTime: Date;             // Başlangıç
-  endTime: Date;               // Bitiş
-  result?: any;                // Sonuç
-  error?: string;              // Hata
+  from: string;                // Sender
+  to: string;                  // Receiver
+  status: 'SUCCESS' | 'FAILED' | 'TIMEOUT'; // Status
+  startTime: Date;             // Start
+  endTime: Date;               // End
+  result?: any;                // Result
+  error?: string;              // Error
 }
 
 interface ExecutionMetrics {
-  totalSteps: number;          // Toplam step
-  completedSteps: number;      // Tamamlanan
-  failedSteps: number;         // Başarısız
-  totalDuration: number;       // Toplam süre (ms)
-  agentsSpawned: number;       // Spawn edilen agent
-  messagesExchanged: number;   // Değişen mesaj
+  totalSteps: number;          // Total steps
+  completedSteps: number;      // Completed
+  failedSteps: number;         // Failed
+  totalDuration: number;       // Total duration (ms)
+  agentsSpawned: number;       // Spawned agents
+  messagesExchanged: number;   // Exchanged messages
 }
 ```
 
@@ -1408,14 +1407,14 @@ interface ExecutionMetrics {
 
 ```typescript
 const plan = createPlan(
-  [{ id: 'm1', type: 'mimar', config: {} }],
+  [{ id: 'a1', type: 'architect', config: {} }],
   [
     {
       stepId: 'task',
       from: 'system',
-      to: 'm1',
+      to: 'a1',
       trigger: MessageType.TASK,
-      payload: { task: 'Kod yaz' }
+      payload: { task: 'Write code' }
     }
   ]
 );
@@ -1428,29 +1427,29 @@ submitPlan(plan);
 ```typescript
 const plan = createPlan(
   [
-    { id: 'k1', type: 'kasif', config: { topic: 'frontend' } },
-    { id: 'k2', type: 'kasif', config: { topic: 'backend' } },
-    { id: 'm1', type: 'mimar', config: {} }
+    { id: 'e1', type: 'explorer', config: { topic: 'frontend' } },
+    { id: 'e2', type: 'explorer', config: { topic: 'backend' } },
+    { id: 'a1', type: 'architect', config: {} }
   ],
   [
     {
       stepId: 'parallel-research',
       from: 'system',
-      to: 'k1',
+      to: 'e1',
       trigger: MessageType.TASK,
-      payload: { task: 'Frontend araştır' }
+      payload: { task: 'Frontend research' }
     },
     {
       stepId: 'backend-research',
       from: 'system',
-      to: 'k2',
+      to: 'e2',
       trigger: MessageType.TASK,
-      payload: { task: 'Backend araştır' }
+      payload: { task: 'Backend research' }
     },
     {
       stepId: 'aggregate',
-      from: 'k1',
-      to: 'm1',
+      from: 'e1',
+      to: 'a1',
       trigger: MessageType.RESULT,
       payload: {}
     }
@@ -1463,9 +1462,9 @@ const plan = createPlan(
 ```typescript
 const plan = createPlan(
   [
-    { id: 'kasif', type: 'kasif', config: {} },
-    { id: 'arkeolog', type: 'arkeolog', config: {} },
-    { id: 'mimar', type: 'mimar', config: {} },
+    { id: 'explorer', type: 'explorer', config: {} },
+    { id: 'archaeologist', type: 'archaeologist', config: {} },
+    { id: 'architect', type: 'architect', config: {} },
     { id: 'test', type: 'test', config: {} },
     { id: 'sentinel', type: 'sentinel', config: {} }
   ],
@@ -1473,7 +1472,7 @@ const plan = createPlan(
     {
       stepId: 'research',
       from: 'system',
-      to: 'kasif',
+      to: 'explorer',
       trigger: MessageType.TASK,
       payload: { query: 'Best practices' },
       waitForResponse: true
@@ -1481,22 +1480,22 @@ const plan = createPlan(
     {
       stepId: 'analyze',
       from: 'system',
-      to: 'arkeolog',
+      to: 'archaeologist',
       trigger: MessageType.TASK,
       payload: { target: './src' },
       waitForResponse: true
     },
     {
       stepId: 'implement',
-      from: 'kasif',
-      to: 'mimar',
+      from: 'explorer',
+      to: 'architect',
       trigger: MessageType.RESULT,
       payload: {},
       waitForResponse: true
     },
     {
       stepId: 'verify',
-      from: 'mimar',
+      from: 'architect',
       to: 'test',
       trigger: MessageType.COMPLETE,
       payload: {},
@@ -1521,7 +1520,7 @@ const plan = createPlan(
 ## Monitoring
 
 ```typescript
-// Bridge durumunu izle
+// Check bridge status
 const status = bridge.getStatus();
 
 console.log('Bridge Status:', {
@@ -1531,7 +1530,7 @@ console.log('Bridge Status:', {
   currentPlan: status.currentPlan
 });
 
-// Event listener'lar
+// Event listeners
 bridge.on('plan:started', (data) => {
   console.log('Plan started:', data.planId);
 });
@@ -1554,27 +1553,27 @@ bridge.on('result:written', (data) => {
 # BASIC COMMANDS
 # ────────────────────────────────────────────────────────────
 
-claude -p "[GÖREV]"
+claude -p "[TASK]"
 
 # ────────────────────────────────────────────────────────────
 # WITH THINKING
 # ────────────────────────────────────────────────────────────
 
-claude -p "think: [GÖREV]"
-claude -p "think hard: [GÖREV]"
-claude --model opus -p "think hard: [GÖREV]"
-claude --model opus -p "ultrathink: [KRİTİK GÖREV]"
+claude -p "think: [TASK]"
+claude -p "think hard: [TASK]"
+claude --model opus -p "think hard: [TASK]"
+claude --model opus -p "ultrathink: [CRITICAL TASK]"
 
 # ────────────────────────────────────────────────────────────
 # PARALLEL EXECUTION
 # ────────────────────────────────────────────────────────────
 
-# 3 agent parallel
-claude -p "GÖREV 1" & claude -p "GÖREV 2" & claude -p "GÖREV 3" & wait
+# 3 agents parallel
+claude -p "TASK 1" & claude -p "TASK 2" & claude -p "TASK 3" & wait
 
 # With PIDs
-claude -p "GÖREV 1" & PID1=$! && \
-claude -p "GÖREV 2" & PID2=$! && \
+claude -p "TASK 1" & PID1=$! && \
+claude -p "TASK 2" & PID2=$! && \
 wait $PID1 $PID2
 
 # ────────────────────────────────────────────────────────────
@@ -1585,21 +1584,21 @@ WORK_DIR="/tmp/agent_work/$(uuidgen | cut -c1-8)"
 mkdir -p "$WORK_DIR"
 
 # Phase 1
-claude -p "think: Araştır, sonucu $WORK_DIR/phase1.md'a yaz" & \
+claude -p "think: Research, write result to $WORK_DIR/phase1.md" & \
 wait
 
 # Phase 2
-claude -p "think hard: $WORK_DIR/phase1.md'i oku, kod yaz" & \
+claude -p "think hard: Read $WORK_DIR/phase1.md, write code" & \
 wait
 
 # Phase 3
-claude -p "Test et"
+claude -p "Test"
 
 # ────────────────────────────────────────────────────────────
 # V10.1 AUTO PERSONA CREATION
 # ────────────────────────────────────────────────────────────
 
-# TypeScript ile persona oluştur
+# Create persona with TypeScript
 node -e "
 const factory = new PersonaFactory();
 const p = factory.builder()
@@ -1608,7 +1607,7 @@ const p = factory.builder()
   .withCategory('DYNAMIC')
   .withIcon('🚀')
   .withTriggers(['trigger1', 'trigger2'])
-  .withSystemPrompt('Sen uzmanısın...')
+  .withSystemPrompt('You are specialist...')
   .build();
 factory.savePersona('my-persona');
 "
@@ -1617,26 +1616,26 @@ factory.savePersona('my-persona');
 # V10.1 PROJECT MANAGEMENT
 # ────────────────────────────────────────────────────────────
 
-# Yeni proje oluştur
+# Create new project
 PROJECT_ID=$(uuidgen)
 PROJECT_DIR="/Users/emre/.gemini/antigravity/brain/$PROJECT_ID"
 mkdir -p "$PROJECT_DIR"
 cat > "$PROJECT_DIR/task.md" << 'EOF'
-# Görev Tanımı
+# Task Definition
 ...
 EOF
 
-# Projeleri listele
+# List projects
 ls -t /Users/emre/.gemini/antigravity/brain/*/task.md | head -10
 
-# Anahtar kelime ile ara
+# Search by keyword
 grep -r "keyword" /Users/emre/.gemini/antigravity/brain/*/task.md
 
 # ────────────────────────────────────────────────────────────
 # V10.1 PLAN TRACKING
 # ────────────────────────────────────────────────────────────
 
-# Plan submit et
+# Submit plan
 cat > .antigravity/inbox/plan_$(uuidgen).json << 'EOF'
 {
   "version": "1.0",
@@ -1646,10 +1645,10 @@ cat > .antigravity/inbox/plan_$(uuidgen).json << 'EOF'
 }
 EOF
 
-# Sonuçları kontrol et
+# Check results
 ls -t .antigravity/outbox/result_*.json | head -5
 
-# Plan detayını görüntüle
+# View plan details
 cat .antigravity/outbox/result_PLANID_TIMESTAMP.json | jq '.'
 
 # ────────────────────────────────────────────────────────────
@@ -1661,20 +1660,20 @@ bash /Users/emre/SmartHukuk/true-agents/parallel-claude.sh
 
 ---
 
-# 🔗 REFERANSLAR
+# 🔗 REFERENCES
 
 **Personas:** `/Users/emre/SmartHukuk/true-agents/personas/`
   - CORE: `/Users/emre/SmartHukuk/true-agents/personas/core/`
     - sentinel.md (V7 - Enhanced)
-    - hakem.md (V7 - Enhanced)
-    - kayitci.md (V7 - Enhanced)
-    - denetci.md (V7 - Enhanced)
+    - referee.md (V7 - Enhanced)
+    - recorder.md (V7 - Enhanced)
+    - auditor.md (V7 - Enhanced)
   - SPECIALIST: `/Users/emre/SmartHukuk/true-agents/personas/specialist/`
-    - mimar.md (V7 - Enhanced)
-    - kasif.md (V7 - Enhanced)
-    - analizci.md (V7 - Enhanced)
+    - architect.md (V7 - Enhanced)
+    - explorer.md (V7 - Enhanced)
+    - analyst.md (V7 - Enhanced)
     - test.md (V7 - Enhanced)
-    - arkeolog.md (V7 - Enhanced)
+    - archaeologist.md (V7 - Enhanced)
 
 **Factory:** `/Users/emre/SmartHukuk/true-agents/src/factory/16-persona-factory.ts`
 **Communication:** `/Users/emre/SmartHukuk/true-agents/src/conversation/15-agent-conversation-system.ts`

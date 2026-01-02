@@ -38,7 +38,7 @@ npm install
 npx tsx src/cli.ts "Implement user authentication"
 
 # Use specific persona
-npx tsx src/cli.ts --persona mimar "Fix the bug"
+npx tsx src/cli.ts --persona architect "Fix the bug"
 
 # Run parallel tasks
 npx tsx src/cli.ts --parallel "Fix backend" "Update frontend"
@@ -54,19 +54,19 @@ npx tsx src/cli.ts --help
 | Persona | Icon | Role |
 |---------|------|------|
 | SENTINEL | 🛡️ | Independent completion verification |
-| HAKEM | 🎯 | Final decision maker (1-10 scoring) |
-| KAYITCI | 📋 | State & checkpoint manager |
-| DENETÇİ | 🔍 | Quality gate & reality validator |
+| REFEREE | 🎯 | Final decision maker (1-10 scoring) |
+| RECORDER | 📋 | State & checkpoint manager |
+| AUDITOR | 🔍 | Quality gate & reality validator |
 
 ### SPECIALIST Personas (On-Demand)
 
 | Persona | Icon | Role | Trigger |
 |---------|------|------|---------|
-| MİMAR | 🏗️ | Builder & implementer | build, implement, code |
-| KAŞIF | 🌐 | Researcher | research, find, search |
-| ANALİZCİ | 🔬 | Data analyst | analyze, data, metrics |
+| ARCHITECT | 🏗️ | Builder & implementer | build, implement, code |
+| EXPLORER | 🌐 | Researcher | research, find, search |
+| ANALYST | 🔬 | Data analyst | analyze, data, metrics |
 | TEST | 🧪 | Verifier | test, verify |
-| ARKEOLOG | 🏛️ | Code analyst | understand, structure |
+| ARCHAEOLOGIST | 🏛️ | Code analyst | understand, structure |
 
 ## Usage in Your Project
 
@@ -78,7 +78,7 @@ git submodule add https://github.com/erturke/true-agents.git libs/true-agents
 
 # Use in your project
 cd libs/true-agents
-npx tsx src/cli.ts --persona mimar "Implement feature"
+npx tsx src/cli.ts --persona architect "Implement feature"
 ```
 
 ### Programmatic Usage
@@ -90,8 +90,8 @@ const cli = new TrueCLI();
 await cli.run(['status']);
 
 console.log(PERSONAS);
-// { CORE: ['SENTINEL', 'HAKEM', 'KAYITCI', 'DENETÇI'],
-//   SPECIALIST: ['MİMAR', 'KAŞIF', 'ANALİZCİ', 'TEST', 'ARKEOLOG'] }
+// { CORE: ['SENTINEL', 'REFEREE', 'RECORDER', 'AUDITOR'],
+//   SPECIALIST: ['ARCHITECT', 'EXPLORER', 'ANALYST', 'TEST', 'ARCHAEOLOGIST'] }
 ```
 
 ### Add Scripts to package.json
@@ -100,8 +100,8 @@ console.log(PERSONAS);
 {
   "scripts": {
     "agent": "tsx libs/true-agents/src/cli.ts",
-    "agent:build": "tsx libs/true-agents/src/cli.ts --persona mimar",
-    "agent:research": "tsx libs/true-agents/src/cli.ts --persona kasif"
+    "agent:build": "tsx libs/true-agents/src/cli.ts --persona architect",
+    "agent:research": "tsx libs/true-agents/src/cli.ts --persona explorer"
   }
 }
 ```
