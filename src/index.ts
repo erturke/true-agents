@@ -65,12 +65,12 @@ export class TrueCLI {
 
 Usage:
   npx tsx cli.ts "task description"     Execute a task
-  npx tsx cli.ts --persona mimar "fix"  Use specific persona
+  npx tsx cli.ts --persona architect "fix"  Use specific persona
   npx tsx cli.ts --parallel "t1" "t2"   Run in parallel
 
 Personas:
-  CORE:      SENTINEL, HAKEM, KAYITCI, DENETÇI
-  SPECIALIST: MİMAR, KAŞIF, ANALİZCİ, TEST, ARKEOLOG
+  CORE:      SENTINEL, REFEREE, RECORDER, AUDITOR
+  SPECIALIST: ARCHITECT, EXPLORER, ANALYST, TEST, ARCHAEOLOGIST
 
 📚 Documentation: master.md
     `);
@@ -80,6 +80,6 @@ Personas:
 // Export metadata
 export const VERSION = '10.0';
 export const PERSONAS = {
-  CORE: ['SENTINEL', 'HAKEM', 'KAYITCI', 'DENETÇI'],
-  SPECIALIST: ['MİMAR', 'KAŞIF', 'ANALİZCİ', 'TEST', 'ARKEOLOG']
+  CORE: ['SENTINEL', 'REFEREE', 'RECORDER', 'AUDITOR'],
+  SPECIALIST: ['ARCHITECT', 'EXPLORER', 'ANALYST', 'TEST', 'ARCHAEOLOGIST']
 } as const;

@@ -1,88 +1,51 @@
-# personas/ - Persona Definitions (V7)
+# Personas
 
 ## 📁 Overview
 
-All persona definitions for the TRUE Multi-Agent System. Each persona has detailed system prompts, domain knowledge, and conversation patterns.
+This directory contains the definitions for all **True Agents** personas.
 
-## 📂 Directory Structure
+## 📂 Structure
 
-```
-personas/
-├── core/            # 4 CORE personas (always active)
-│   ├── sentinel.md   # 🛡️ Completion verification
-│   ├── hakem.md      # 🎯 Final decision (1-10 scoring)
-│   ├── kayitci.md    # 📋 State & checkpoint
-│   └── denetci.md    # 🔍 Quality gate
-│
-├── specialist/      # 5 SPECIALIST personas (on-demand)
-│   ├── mimar.md      # 🏗️ Builder & implementer
-│   ├── kasif.md      # 🌐 Researcher
-│   ├── analizci.md   # 🔬 Data analyst
-│   ├── test.md       # 🧪 Verifier
-│   └── arkeolog.md   # 🏛️ Code analyst
-│
-└── templates/       # Dynamic persona templates
-    ├── dynamic.md    # Template for custom personas
-    └── dynamic-persona.md  # Alternative template
-```
+- **`core/`**: Mandatory personas that are always active (Verification, Decision, State).
+- **`specialist/`**: On-demand personas for specific tasks (Coding, Research, Analysis).
+- **`templates/`**: Templates for creating new personas.
 
-## 🎯 Persona Quick Reference
+## 🎭 Persona List
 
-| Persona | Category | Trigger | Model | Thinking |
-|---------|----------|---------|-------|----------|
-| SENTINEL | CORE | verify, check | Opus | ultrathink: |
-| HAKEM | CORE | decide, judge | Opus | think hard: |
-| KAYITCI | CORE | checkpoint, state | Sonnet | think: |
-| DENETÇİ | CORE | gate, validate | Sonnet | think: |
-| MİMAR | SPECIALIST | build, implement | Sonnet | think: |
-| KAŞIF | SPECIALIST | research, find | Sonnet | think: |
-| ANALİZCİ | SPECIALIST | analyze, data | Sonnet | think: |
-| TEST | SPECIALIST | test, verify | Sonnet | think: |
-| ARKEOLOG | SPECIALIST | understand, structure | Sonnet | think: |
+### Core Personas (Always Active)
 
-## 📖 Persona File Structure
+| Name | Layer | Role | Model | Thinking |
+|------|-------|------|-------|----------|
+| **REFEREE** | CORE | Decide, Judge, Score | Opus | `ultrathink:` |
+| **SENTINEL** | CORE | Verify, Gate, Check | Opus | `ultrathink:` |
+| **RECORDER** | CORE | State, Memory, Goal | Sonnet | `think:` |
+| **AUDITOR** | CORE | Quality, Standards | Sonnet | `think:` |
 
-Each `.md` file contains:
+### Specialist Personas (On-Demand)
 
-```markdown
----
-description: [Brief description]
----
+| Name | Layer | Role | Model | Thinking |
+|------|-------|------|-------|----------|
+| **ARCHITECT** | SPECIALIST | Build, Design, Fix | Sonnet | `think hard:` |
+| **EXPLORER** | SPECIALIST | Research, Find | Sonnet | `think:` |
+| **ANALYST** | SPECIALIST | Data, Metrics | Sonnet | `think:` |
+| **TEST** | SPECIALIST | Verify, Validate | Sonnet | `think:` |
+| **ARCHAEOLOGIST** | SPECIALIST | Understand, Structure | Sonnet | `think:` |
 
-# 🎯 ICON Persona V7
+## 🔄 Selection Logic
 
-**Katman**: CORE/SPECIALIST
-**Tetikleyici**: [trigger words]
-**Model**: sonnet/opus
-**Thinking**: [thinking level]
+The **Orchestrator** selects the appropriate persona based on the user's intent:
 
-## 🧠 SYSTEM PROMPT
-[Persona description and role]
+1. **New Request** → `RECORDER` initializes state.
+2. **Implementation** → `ARCHITECT` builds.
+3. **Research Needed** → `EXPLORER` finds info.
+4. **Verification** → `SENTINEL` checks completion.
+5. **Final Decision** → `REFEREE` approves.
 
-## Domain Knowledge
-[Relevant domain expertise]
+## 📚 Usage
 
-## 💬 CONVERSATION PATTERNS
-[Example interactions]
-
-## 🔍 FRAMEWORK
-[Analysis/Testing framework]
-
-## 🏷️ MARKER PRODUCTION
-[Output format requirements]
-```
-
-## 💡 Using Personas
+To run a specific persona manually:
 
 ```bash
-# Via CLI (auto-detects persona)
-npx tsx cli.ts "Implement user auth"  # Uses MİMAR
-
-# Explicit persona selection
-npx tsx cli.ts --persona sentinel "Verify implementation"
+npx tsx cli.ts --persona architect "Create a login page"
+npx tsx cli.ts --persona explorer "Find React best practices"
 ```
-
-## 📚 See Also
-
-- `../master.md` - Complete system reference with all personas
-- Each subdirectory's README for details

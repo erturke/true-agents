@@ -1,76 +1,34 @@
-# personas/templates/ - Dynamic Persona Templates
+# personas/templates/ - Persona Templates
 
 ## 📁 Overview
 
-Templates for creating custom personas at runtime. Used by `PersonaFactory` and `PersonaBuilder`.
+This directory contains templates and examples for creating new personas.
 
 ## 📂 Files
 
-| File | Purpose |
-|------|---------|
-| `dynamic.md` | Template for dynamic persona creation |
-| `dynamic-persona.md` | Alternative template format |
+- **`dynamic-persona.md`**: Template for creating a fully defined static persona.
+- **`dynamic.md`**: Guide for the Orchestrator to spawn temporary, dynamic personas on-the-fly.
 
-## 🎯 Template Structure
+## 💡 How to Create a New Persona
 
-```markdown
----
-description: [Persona description]
----
+1. Copy `dynamic-persona.md`.
+2. Renamed it to `[your-persona].md`.
+3. Fill in the details:
+   - **Name**: Unique identifier (e.g., `DESIGNER`).
+   - **Layer**: `CORE` (always on) or `SPECIALIST` (on-demand).
+   - **Trigger**: Keywords that activate this persona.
+   - **System Prompt**: Instructions, philosophy, and domain knowledge.
+   - **Communication Style**: How the persona talks.
 
-# 🎯 ICON Persona V[version]
-
-**Katman**: DYNAMIC
-**Tetikleyici**: [trigger words]
-**Model**: sonnet/opus
-**Thinking**: [thinking level]
-
-## 🧠 SYSTEM PROMPT
-[Your custom system prompt here]
-
-## Domain Knowledge
-[Relevant domain expertise]
-
-## 💬 CONVERSATION PATTERNS
-[Example interactions]
-
-## 🔍 FRAMEWORK
-[Task-specific framework]
-
-## 🏷️ MARKER PRODUCTION
-[Output format requirements]
-```
-
-## 💡 Creating Custom Personas
-
-### Using PersonaBuilder
+## 💻 Programmatic Usage
 
 ```typescript
-import { PersonaBuilder } from '../../src/factory/16-persona-factory.js';
+import { PersonaBuilder } from '../core/PersonaBuilder';
 
-const customPersona = new PersonaBuilder()
-  .withId('seo-expert')
-  .withName('SEO UZMANI')
-  .withCategory(PersonaCategory.SPECIALIST)
-  .withIcon('🔍')
-  .withTrigger(['seo', 'optimization', 'ranking'])
-  .withPersonality({
-    communication: 'analytical',
-    tone: 'technical',
-    verbosity: 'detailed',
-    collaboration: 'collaborative'
-  })
-  .withSystemPrompt('Sen SEO uzmanısın....')
+const seoExpert = new PersonaBuilder()
+  .withName('SEO')
+  .withRole('Search Engine Optimization Specialist')
+  .withSystemPrompt('You are an SEO expert...')
+  .withTriggers(['seo', 'ranking', 'google'])
   .build();
 ```
-
-### Using Template File
-
-1. Copy `dynamic.md` to your persona file
-2. Fill in the template sections
-3. Register with `PersonaFactory`
-
-## 📚 See Also
-
-- `../../src/factory/` - Persona creation code
-- `../../master.md` - System reference

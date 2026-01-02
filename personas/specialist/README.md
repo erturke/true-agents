@@ -8,11 +8,11 @@ SPECIALIST personas are activated based on task requirements. Each is a domain e
 
 | File | Icon | Role | Trigger Words |
 |------|------|------|---------------|
-| `mimar.md` | 🏗️ | MİMAR | build, implement, code, fix, create |
-| `kasif.md` | 🌐 | KAŞIF | research, find, search, learn, best practice |
-| `analizci.md` | 🔬 | ANALİZCİ | analyze, data, metrics, query, SQL, trend |
+| `architect.md` | 🏗️ | ARCHITECT | build, implement, code, fix, create |
+| `explorer.md` | 🌐 | EXPLORER | research, find, search, learn, best practice |
+| `analyst.md` | 🔬 | ANALYST | analyze, data, metrics, query, SQL, trend |
 | `test.md` | 🧪 | TEST | test, verify, check, validate |
-| `arkeolog.md` | 🏛️ | ARKEOLOG | understand, analyze structure, read code |
+| `archaeologist.md` | 🏛️ | ARCHAEOLOGIST | understand, analyze structure, read code |
 
 ## 🎯 Selection Logic
 
@@ -20,13 +20,13 @@ SPECIALIST personas are activated based on task requirements. Each is a domain e
 function selectSpecialist(task: string): Persona {
   const lower = task.toLowerCase();
 
-  if (lower.includes('build') || lower.includes('implement')) return 'mimar';
-  if (lower.includes('research') || lower.includes('find')) return 'kasif';
-  if (lower.includes('analyze') || lower.includes('data')) return 'analizci';
+  if (lower.includes('build') || lower.includes('implement')) return 'architect';
+  if (lower.includes('research') || lower.includes('find')) return 'explorer';
+  if (lower.includes('analyze') || lower.includes('data')) return 'analyst';
   if (lower.includes('test') || lower.includes('verify')) return 'test';
-  if (lower.includes('understand') || lower.includes('structure')) return 'arkeolog';
+  if (lower.includes('understand') || lower.includes('structure')) return 'archaeologist';
 
-  return 'mimar'; // Default
+  return 'architect'; // Default
 }
 ```
 
@@ -38,7 +38,7 @@ function selectSpecialist(task: string): Persona {
 └──────────────┬────────────────────────────────┬──────────────┘
                │                                │
         ┌──────▼────────┐              ┌───────▼────────┐
-        │   KAYITCI     │              │  Trigger Word  │
+        │   RECORDER    │              │  Trigger Word  │
         │ (Analyze Task)│              │     Analysis    │
         └──────┬────────┘              └───────┬────────┘
                │                               │
@@ -52,26 +52,26 @@ function selectSpecialist(task: string): Persona {
         ┌──────────────────┼──────────────────┐
         │                  │                  │
    ┌────▼────┐      ┌─────▼─────┐     ┌─────▼─────┐
-   │  MİMAR  │      │   KAŞIF   │     │ ANALİZCİ  │
+   │ARCHITECT│      │ EXPLORER  │     │  ANALYST  │
    │ (Build) │      │ (Research)│     │ (Analyze) │
    └─────────┘      └───────────┘     └───────────┘
 ```
 
 ## 🎨 Persona Details
 
-### 🏗️ MİMAR - Builder
+### 🏗️ ARCHITECT - Builder
 - **Role**: Write code, implement features, fix bugs
 - **Thinking**: `think:` (Sonnet)
 - **Domain Knowledge**: Design patterns, SOLID, architecture
 - **Output**: Working code with tests
 
-### 🌐 KAŞIF - Researcher
+### 🌐 EXPLORER - Researcher
 - **Role**: Find best practices, search documentation, learn
 - **Thinking**: `think:` (Sonnet)
 - **Domain Knowledge**: Reliable sources, search patterns
 - **Output**: Research findings with sources
 
-### 🔬 ANALİZCİ - Data Analyst
+### 🔬 ANALYST - Data Analyst
 - **Role**: Analyze data, find patterns, run queries
 - **Thinking**: `think:` (Sonnet)
 - **Domain Knowledge**: SQL, statistics, metrics
@@ -83,7 +83,7 @@ function selectSpecialist(task: string): Persona {
 - **Domain Knowledge**: Testing frameworks, coverage
 - **Output**: Test results with before/after
 
-### 🏛️ ARKEOLOG - Code Analyst
+### 🏛️ ARCHAEOLOGIST - Code Analyst
 - **Role**: Understand code, analyze structure
 - **Thinking**: `think:` (Sonnet)
 - **Domain Knowledge**: Code patterns, architecture
@@ -93,12 +93,12 @@ function selectSpecialist(task: string): Persona {
 
 ```bash
 # Auto-detected based on task
-npx tsx cli.ts "Implement user login"  # Activates MİMAR
-npx tsx cli.ts "Find React best practices"  # Activates KAŞIF
+npx tsx cli.ts "Implement user login"  # Activates ARCHITECT
+npx tsx cli.ts "Find React best practices"  # Activates EXPLORER
 
 # Explicit selection
-npx tsx cli.ts --persona mimar "Fix the bug"
-npx tsx cli.ts --persona kasif "Research OAuth"
+npx tsx cli.ts --persona architect "Fix the bug"
+npx tsx cli.ts --persona explorer "Research OAuth"
 ```
 
 ## 📚 See Also

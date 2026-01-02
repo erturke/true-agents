@@ -9,9 +9,9 @@ CORE personas are always active in every TRUE agent session. They provide verifi
 | File | Icon | Role | Key Function |
 |------|------|------|--------------|
 | `sentinel.md` | 🛡️ | SENTINEL | Independent completion verification - skeptical validator |
-| `hakem.md` | 🎯 | HAKEM | Final decision maker - scores 1-10, approves/rejects |
-| `kayitci.md` | 📋 | KAYITCI | State manager - checkpoints, goals, markers |
-| `denetci.md` | 🔍 | DENETÇİ | Quality gate - runs REALITY_GATES |
+| `referee.md` | 🎯 | REFEREE | Final decision maker - scores 1-10, approves/rejects |
+| `recorder.md` | 📋 | RECORDER | State manager - checkpoints, goals, markers |
+| `auditor.md` | 🔍 | AUDITOR | Quality gate - runs REALITY_GATES |
 
 ## 🔄 CORE Workflow
 
@@ -20,18 +20,18 @@ CORE personas are always active in every TRUE agent session. They provide verifi
              │
              ▼
     ┌─────────────────┐
-    │   KAYITCI       │  ← Inject goal, create checkpoint
+    │   RECORDER      │  ← Inject goal, create checkpoint
     │  (State Init)   │
     └────────┬────────┘
              │
              ▼
     ┌─────────────────┐
-    │  SPECIALIST     │  ← MİMAR, KAŞIF, etc. do work
+    │  SPECIALIST     │  ← ARCHITECT, EXPLORER, etc. do work
     │   (Execute)     │
              │
              ▼
     ┌─────────────────┐
-    │   DENETÇİ       │  ← Run REALITY_GATES
+    │   AUDITOR       │  ← Run REALITY_GATES
     │  (Quality Gate) │
              │
              ▼
@@ -41,12 +41,12 @@ CORE personas are always active in every TRUE agent session. They provide verifi
              │
              ▼
     ┌─────────────────┐
-    │    HAKEM        │  ← Score 1-10, final decision
+    │    REFEREE      │  ← Score 1-10, final decision
     │   (Decide)      │
              │
              ▼
     ┌─────────────────┐
-    │   KAYITCI       │  ← Save result, update markers
+    │   RECORDER      │  ← Save result, update markers
     │  (Checkpoint)   │
     └─────────────────┘
 ```
@@ -58,17 +58,17 @@ CORE personas are always active in every TRUE agent session. They provide verifi
 - Requires: Evidence for all claims
 - Blocks: Completion without proof
 
-### HAKEM - Decision
+### REFEREE - Decision
 - Scores: 1-10 scale
-- Criteria: Doğruluk, Tamlık, Kalite, Kanıt, Efficiency
-- Decision: ONAY, KABUL, TEKRAR, REDDET
+- Criteria: Accuracy, Completeness, Quality, Evidence, Efficiency
+- Decision: APPROVE, ACCEPT, REPEAT, REJECT
 
-### KAYITCI - State
+### RECORDER - State
 - Tracks: All MARKERs produced
 - Injects: GOAL_PERSISTENCE at checkpoints
 - Manages: Conversation state
 
-### DENETÇİ - Quality
+### AUDITOR - Quality
 - Runs: REALITY_GATES (FILE_EXISTS, COMMAND_SUCCESS, etc.)
 - Fail action: HARD_STOP on critical failures
 - Ensures: Quality before proceeding
@@ -84,5 +84,4 @@ CORE personas are automatically active. Their `.md` files contain:
 
 ## 📚 See Also
 
-- `../../master.md` - Complete system reference
 - `../specialist/` - On-demand personas
