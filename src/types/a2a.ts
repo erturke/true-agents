@@ -157,4 +157,91 @@ export interface AgentContext {
   previousOutputs: AgentOutput[];
   conversationHistory: string;
   userMessages?: string[];
+  documents?: LoadedDocument[];  // Reference documents for context
+}
+
+// ============================================================
+// AUTO A2A TYPES
+// ============================================================
+
+/**
+ * Action type detected in task
+ */
+export type ActionType =
+  | 'research'
+  | 'implement'
+  | 'fix'
+  | 'analyze'
+  | 'test'
+  | 'refactor'
+  | 'document';
+
+/**
+ * Task analysis result from TaskAnalyzer
+ */
+export interface TaskAnalysis {
+  complexity: 'simple' | 'medium' | 'complex';
+  domains: string[];
+  actionTypes: ActionType[];
+  requiresResearch: boolean;
+  requiresImplementation: boolean;
+  requiresTesting: boolean;
+  requiresCodeAnalysis: boolean;
+  suggestedPersonas: Persona[];
+  reasoning: string;
+  confidence: number;
+}
+
+/**
+ * Document reference extracted from task
+ */
+export interface DocumentReference {
+  type: 'path' | 'url';
+  value: string;
+  alias?: string;
+  contextHint?: string;
+  startIndex: number;
+  endIndex: number;
+}
+
+/**
+ * Document metadata
+ */
+export interface DocumentMetadata {
+  path: string;
+  size: number;
+  lines: number;
+  language?: string;
+  lastModified: number;
+}
+
+/**
+ * Loaded document with content and metadata
+ */
+export interface LoadedDocument {
+  reference: DocumentReference;
+  content: string;
+  summary: string;
+  metadata: DocumentMetadata;
+  truncated?: boolean;
+}
+
+/**
+ * A2A auto-detection result
+ */
+export interface A2ADecision {
+  useA2A: boolean;
+  reason: string;
+  confidence: number;
+  suggestedPersonas?: Persona[];
+  fallbackPersona?: Persona;
+}
+
+/**
+ * Enhanced workflow config with document support
+ */
+export interface EnhancedWorkflowConfig extends WorkflowConfig {
+  documents?: LoadedDocument[];
+  autoDetected?: boolean;
+  taskAnalysis?: TaskAnalysis;
 }
