@@ -1,7 +1,7 @@
 {
   "name": "@true-agents/core",
-  "version": "1.0.0",
-  "description": "TRUE Multi-Agent System - Persona-based agent orchestration framework with parallel execution, dynamic persona creation, and project management",
+  "version": "1.1.0",
+  "description": "TRUE Multi-Agent System - Fully Autonomous A2A Orchestration with Intelligent Routing and Document Loading",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
