@@ -100,48 +100,36 @@ npx tsx src/cli.ts --parallel "Fix backend" "Update frontend" "Run tests"
 
 ---
 
-## 💻 IDE Integration (Antigravity & VS Code)
+## 💻 IDE Integration (VS Code, Cursor, Antigravity)
 
-You can integrate `true-agents` directly into your IDE workflow.
+Using True Agents in your IDE is extremely simple. You do **not** need complex configurations.
 
-### Antigravity Integration
+**Prerequisite:** Ensure you have the `claude` CLI installed and authenticated.
 
-In Antigravity (or Cursor/VS Code), you can run agents directly from the terminal or via command palette if configured.
+### The "Terminal Flow" (Recommended)
 
-**1. Terminal Usage:**
-Simply open the integrated terminal and run:
-`npx tsx src/cli.ts "Your task here"`
+Since True Agents V11 (Whistling Giraffe) is fully autonomous, you just need your IDE's terminal.
 
-**2. Referenced Context:**
-If you have a file open in your IDE (e.g., `user_controller.ts`), you can tell the agent to use it:
-`npx tsx src/cli.ts "Refactor @user_controller.ts to use async/await"`
+1.  **Open Terminal** (`Ctrl+` or `Cmd+J`)
+2.  **Type your request** with file references:
 
-**3. Tasks Configuration (`.vscode/tasks.json`):**
-Add this task to run agents with a shortcut:
+```bash
+# Example: Refactoring a specific file
+npx tsx src/cli.ts "Refactor @user_controller.ts to use async/await"
+```
 
-```json
-{
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "True Agent: Architect",
-      "type": "shell",
-      "command": "npx tsx ${workspaceFolder}/libs/true-agents/src/cli.ts --persona architect \"${input:task}\"",
-      "problemMatcher": [],
-      "presentation": {
-        "reveal": "always"
-      }
-    }
-  ],
-  "inputs": [
-    {
-      "id": "task",
-      "description": "Task description",
-      "default": "Fix the selected code",
-      "type": "promptString"
-    }
-  ]
-}
+**Why this is better:**
+*   **Auto Context**: The `@user_controller.ts` reference automatically loads the file content.
+*   **Auto Routing**: The system decides if it needs an Architect or Explorer.
+*   **No Setup**: Works instantly in VS Code, Cursor, or any editor with a terminal.
+
+### Using with Claude Code
+
+If you use the `claude` CLI directly, you can simply call True Agents as a tool or sub-process:
+
+```bash
+# Inside Claude Code session
+/run npx tsx src/cli.ts "Analyze @schema.prisma"
 ```
 
 ---
