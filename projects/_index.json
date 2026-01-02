@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-02T02:15:00Z",
+  "projects": {},
+  "stats": {
+    "totalProjects": 0,
+    "activeProjects": 0,
+    "archivedProjects": 0,
+    "totalPlans": 0,
+    "totalSessions": 0
+  },
+  "categories": ["web", "data", "refactor", "research", "audit", "infrastructure"],
+  "tags": []
+}

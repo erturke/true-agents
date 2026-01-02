@@ -1,0 +1,30 @@
+{
+  "id": "session-{YYYYMMDD}-{HHMMSS}-{persona}",
+  "projectId": "{project-id}",
+  "planId": "{plan-id}",
+  "planStepId": "{step-id}",
+  "persona": "PERSONA_NAME",
+  "task": "Task description",
+  "status": "in_progress",
+  "startedAt": "2025-01-02T10:00:00Z",
+  "completedAt": null,
+  "duration": null,
+  "model": "claude-opus-4-5",
+  "parameters": {
+    "thinking": null,
+    "temperature": 0.7,
+    "maxTokens": 8000
+  },
+  "artifacts": [],
+  "metrics": {
+    "tokensUsed": 0,
+    "cost": 0,
+    "filesRead": 0,
+    "filesWritten": 0,
+    "callsToLSP": 0
+  },
+  "checkpoints": [],
+  "parentSession": null,
+  "childSessions": [],
+  "relatedSessions": []
+}

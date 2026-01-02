@@ -1,0 +1,27 @@
+{
+  "id": "{category}-{name}-{YYMMDD}",
+  "name": "Project Name",
+  "description": "Project description",
+  "category": "web-app",
+  "status": "active",
+  "priority": "medium",
+  "createdAt": "2025-01-02T10:00:00Z",
+  "updatedAt": "2025-01-02T10:00:00Z",
+  "completedAt": null,
+  "tags": [],
+  "techStack": {},
+  "team": [],
+  "links": {},
+  "metrics": {
+    "totalPlans": 0,
+    "activePlans": 0,
+    "completedPlans": 0,
+    "totalSessions": 0,
+    "successRate": 1.0
+  },
+  "settings": {
+    "defaultPersonas": [],
+    "autoArchive": true,
+    "archiveAfterDays": 90
+  }
+}

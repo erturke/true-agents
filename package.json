@@ -1,0 +1,85 @@
+{
+  "name": "@true-agents/core",
+  "version": "1.0.0",
+  "description": "TRUE Multi-Agent System - Persona-based agent orchestration framework with parallel execution, dynamic persona creation, and project management",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "true-agents": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./personas": {
+      "types": "./dist/personas/index.d.ts",
+      "import": "./dist/personas/index.js"
+    },
+    "./factory": {
+      "types": "./dist/factory/index.d.ts",
+      "import": "./dist/factory/index.js"
+    },
+    "./projects": {
+      "types": "./dist/projects/index.d.ts",
+      "import": "./dist/projects/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "personas",
+    "projects",
+    "master.md",
+    "MASTER_GUIDE.md",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev": "tsx watch src/index.ts",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "cli": "tsx src/cli.ts"
+  },
+  "keywords": [
+    "multi-agent",
+    "agents",
+    "orchestration",
+    "persona",
+    "autonomous",
+    "parallel-execution",
+    "agent-framework",
+    "ai-agents",
+    "llm-agents",
+    "workflow",
+    "automation"
+  ],
+  "author": "erturke",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erturke/true-agents.git"
+  },
+  "homepage": "https://github.com/erturke/true-agents#readme",
+  "bugs": {
+    "url": "https://github.com/erturke/true-agents/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
+    "@typescript-eslint/parser": "^8.19.0",
+    "eslint": "^9.18.0",
+    "prettier": "^3.4.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
