@@ -1,139 +1,118 @@
-# @true-agents/core (Maestro V6)
+# @true-agents/core 🦒
 
-> **True Agents V11**: Persona-based multi-agent orchestration framework with parallel execution, dynamic persona creation, and project management.
+> **Welcome to True Agents V11 (Whistling Giraffe)**
+> The only Multi-Agent System you'll ever need. Fully autonomous, intelligent, and relentlessly effective.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+---
 
-- **9 Built-in Personas (V11)** - 4 CORE (always active) + 5 SPECIALIST (on-demand)
-- **Maestro V6 Engine** - Intent-first orchestration with dynamic handoffs
-- **Auto Persona Detection** - Automatically selects the right persona for your task
-- **Parallel Execution** - Run multiple agents simultaneously (Swarm Mode)
-- **Dynamic Persona Creation** - Create custom personas at runtime
-- **Project Management** - UUID-based project tracking with persistent storage
+## 🦒 "Whistling Giraffe" Auto A2A System
+True Agents V11 introduces **Auto A2A (Agent-to-Agent)** mode. You no longer need to manually coordinate agents. The system is smart enough to listen to your request, understand its complexity, read your referenced documents, and deploy the perfect team of AI experts to get the job done.
 
-## Installation (Git)
+**Just type:** `"Research the best DB for my app and implement the schema"`
+**True Agents will:**
+1.  **Detect** complexity (Requires Research + Implementation).
+2.  **Deploy** `EXPLORER` to research database options.
+3.  **Handoff** findings to `ARCHITECT`.
+4.  **Implement** the schema code.
+5.  **Verify** with `SENTINEL`.
 
-### As Submodule (Recommended)
+---
 
+## ⚡ Quick Start
+
+### 1. Installation
 ```bash
-git submodule add https://github.com/erturke/true-agents.git libs/true-agents
-cd libs/true-agents
-npm install
-```
-
-### Or Clone Directly
-
-```bash
-git clone https://github.com/erturke/true-agents.git
+# Clone the repository
+git clone https://github.com/erturke/true-agents.git true-agents
 cd true-agents
+
+# Install dependencies
 npm install
+
+# Build the project
+npm run build
 ```
 
-## Quick Start
+### 2. Run Your First Agent
+You don't need to specify flags. Just say what you want.
 
 ```bash
-# Run CLI
-npx tsx src/cli.ts "Implement user authentication"
+# Simple Task (Routes to Single Agent)
+npx tsx src/cli.ts "Write a Hello World function in Python"
 
-# Use specific persona
-npx tsx src/cli.ts --persona architect "Fix the bug"
+# Complex Task (Routes to Auto A2A)
+npx tsx src/cli.ts "Research the best way to center a div and implement 3 examples"
 
-# Run parallel tasks
-npx tsx src/cli.ts --parallel "Fix backend" "Update frontend"
-
-# Show help
-npx tsx src/cli.ts --help
+# Context-Aware Task (Loads Documents)
+npx tsx src/cli.ts "Refactor the login logic based on @auth_specs.md"
 ```
 
-## Personas
+---
 
-### CORE Personas (Always Active)
+## 🤖 The Persona Team
+You have a full team of 9 specialists at your disposal. They work for you 24/7.
 
-| Persona | Icon | Role |
-|---------|------|------|
-| SENTINEL | 🛡️ | Independent completion verification |
-| REFEREE | 🎯 | Final decision maker (1-10 scoring) |
-| RECORDER | 📋 | State & checkpoint manager |
-| AUDITOR | 🔍 | Quality gate & reality validator |
+### 🛡️ CORE (Quality Assurance)
+*   **SENTINEL**: The final boss. Verifies everything before completion.
+*   **REFEREE**: The judge. Makes difficult decisions and scores outputs (1-10).
+*   **RECORDER**: The memory. Manages checkpoints and state.
+*   **AUDITOR**: The inspector. Validates quality gates and sanity checks.
 
-### SPECIALIST Personas (On-Demand)
+### 🏗️ SPECIALIST (The Doers)
+*   **ARCHITECT**: The builder. Writes code, designs systems, fixes bugs. (*Your "Senior Dev"*).
+*   **EXPLORER**: The researcher. Googles, finds docs, learns new tech. (*Your "Researcher"*).
+*   **ANALYST**: The data scientist. Crunches numbers, SQL, logs. (*Your "Data Scientist"*).
+*   **TEST**: The QA engineer. Writes and runs tests. (*Your "QA"*).
+*   **ARCHAEOLOGIST**: The reader. Reads legacy code and explains it. (*Your "Legacy Expert"*).
 
-| Persona | Icon | Role | Trigger |
-|---------|------|------|---------|
-| ARCHITECT | 🏗️ | Builder & implementer | build, implement, code |
-| EXPLORER | 🌐 | Researcher | research, find, search |
-| ANALYST | 🔬 | Data analyst | analyze, data, metrics |
-| TEST | 🧪 | Verifier | test, verify |
-| ARCHAEOLOGIST | 🏛️ | Code analyst | understand, structure |
+---
 
-## Usage in Your Project
+## 🚀 Advanced Usage
 
-### As Submodule
+### Manual Overrides
+Sometimes you want specific control.
 
 ```bash
-# Add to your project
-git submodule add https://github.com/erturke/true-agents.git libs/true-agents
+# Force specific persona
+npx tsx src/cli.ts --persona architect "Fix this bug"
 
-# Use in your project
-cd libs/true-agents
-npx tsx src/cli.ts --persona architect "Implement feature"
+# Force Auto A2A mode
+npx tsx src/cli.ts --a2a "Do this complex thing"
+
+# Run in Parallel (Swarm Mode)
+npx tsx src/cli.ts --parallel "Task A" "Task B" "Task C"
 ```
 
-### Programmatic Usage
+### Document Loading
+You can give agents context by referencing files.
 
-```typescript
-import { TrueCLI, PERSONAS } from './libs/true-agents/src/index.js';
+*   `@filename`: "Read @package.json and tell me the version"
+*   `use filename`: "Use README.md to explain the project"
+*   `based on filename`: "Refactor based on styleguide.md"
 
-const cli = new TrueCLI();
-await cli.run(['status']);
+---
 
-console.log(PERSONAS);
-// { CORE: ['SENTINEL', 'REFEREE', 'RECORDER', 'AUDITOR'],
-//   SPECIALIST: ['ARCHITECT', 'EXPLORER', 'ANALYST', 'TEST', 'ARCHAEOLOGIST'] }
-```
+## 📚 Documentation
+*   **[REFERENCE.md](./REFERENCE.md)**: The Single Source of Truth. Deep dive into every feature.
+*   **[MASTER_GUIDE.md](./MASTER_GUIDE.md)**: Detailed architectural guide.
+*   **[USAGE.md](./USAGE.md)**: Git integration and project usage.
 
-### Add Scripts to package.json
+---
 
-```json
-{
-  "scripts": {
-    "agent": "tsx libs/true-agents/src/cli.ts",
-    "agent:build": "tsx libs/true-agents/src/cli.ts --persona architect",
-    "agent:research": "tsx libs/true-agents/src/cli.ts --persona explorer"
-  }
-}
-```
-
-## Documentation
-
-- **[USAGE.md](./USAGE.md)** - Comprehensive usage guide with Git integration
-
-## Project Structure
-
+## 📂 Project Structure
 ```
 true-agents/
 ├── src/
-│   ├── index.ts          # Main export
-│   └── cli.ts            # CLI entry point
-├── personas/             # Persona definitions
-│   ├── core/             # CORE personas
-│   ├── specialist/       # SPECIALIST personas
-│   ├── dynamic/          # Dynamic persona registry
-│   └── templates/        # Persona templates
-├── projects/             # Project templates
-│   ├── _templates/       # Plan, project, session templates
-│   └── templates/        # Web app template
-├── master.md             # Complete system reference
-├── MASTER_GUIDE.md       # Detailed guide
-└── package.json
+│   ├── cli.ts            # The brain (Entry point)
+│   ├── a2a/              # Auto A2A Engine
+│   └── personas/         # Persona Definitions
+├── master.md             # System Spec
+└── REFERENCE.md          # User Manual
 ```
 
-## License
+---
 
-MIT
-
-## Repository
-
-[https://github.com/erturke/true-agents](https://github.com/erturke/true-agents)
+**Ready to build?**
+`npx tsx src/cli.ts "Let's build something amazing"`
