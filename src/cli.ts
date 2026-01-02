@@ -1,15 +1,17 @@
 #!/usr/bin/env tsx
 /**
- * TRUE Multi-Agent System - Standalone CLI V11
+ * TRUE Multi-Agent System - Standalone CLI V12
  *
  * Usage:
- *   npx tsx cli.ts "task description"
- *   npx tsx cli.ts --persona architect "fix the bug"
- *   npx tsx cli.ts --parallel "task1" "task2"
+ *   npx tsx cli.ts "task description"                    Single agent mode
+ *   npx tsx cli.ts --a2a "task description"              A2A workflow mode (NEW)
+ *   npx tsx cli.ts --persona architect "fix the bug"     Specific persona
+ *   npx tsx cli.ts --parallel "task1" "task2"            Parallel tasks
  *
  * Features:
  * - Auto-detects complexity
- * - Spawns appropriate Claude Code CLI agent
+ * - A2A mode: Agents talk to each other with dynamic handoff
+ * - Interactive: Pause, retry, or intervene during workflow
  * - Executes in parallel when needed
  * - Works from any directory
  */
@@ -17,7 +19,8 @@
 import { spawn } from 'child_process';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
+import type { WorkflowConfig, WorkflowState } from './types/a2a.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -25,11 +28,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // TYPES & CONFIG
 // ==========================================
 
-type Persona = 'sentinel' | 'referee' | 'recorder' | 'auditor' | 'architect' | 'explorer' | 'analyst' | 'test' | 'archaeologist';
+export type Persona = 'sentinel' | 'referee' | 'recorder' | 'auditor' | 'architect' | 'explorer' | 'analyst' | 'test' | 'archaeologist';
 
 interface CLIOptions {
   persona?: Persona;
   parallel?: boolean;
+  a2a?: boolean;              // NEW: Enable A2A workflow mode
+  noInteractive?: boolean;     // NEW: Disable interactive mode in A2A
   thinking?: 'none' | 'think' | 'think-hard' | 'ultrathink';
   model?: 'sonnet' | 'opus';
   directory?: string;
@@ -346,6 +351,10 @@ async function main() {
       options.persona = args[++i] as Persona;
     } else if (arg === '--parallel') {
       options.parallel = true;
+    } else if (arg === '--a2a') {
+      options.a2a = true;
+    } else if (arg === '--no-interactive') {
+      options.noInteractive = true;
     } else if (arg === '--thinking') {
       options.thinking = args[++i] as any;
     } else if (arg === '--model') {
@@ -354,6 +363,7 @@ async function main() {
       options.directory = args[++i];
     } else if (arg.startsWith('-')) {
       console.error(`❌ Unknown option: ${arg}`);
+      console.log('Use --help to see available options');
       process.exit(1);
     } else {
       tasks.push(arg);
@@ -365,42 +375,109 @@ async function main() {
     process.exit(1);
   }
 
+  // A2A mode (NEW)
+  if (options.a2a) {
+    return runA2AWorkflow(tasks.join(' '), options);
+  }
+
+  // Parallel mode
   if (options.parallel) {
     await spawnParallel(tasks, options);
-  } else {
-    const code = await spawnClaude(tasks.join(' '), options);
-    process.exit(code);
+    return;
   }
+
+  // Single agent mode (default)
+  const code = await spawnClaude(tasks.join(' '), options);
+  process.exit(code);
+}
+
+/**
+ * Run A2A workflow (NEW)
+ */
+async function runA2AWorkflow(task: string, options: CLIOptions): Promise<void> {
+  // Dynamically import A2A modules (only when needed)
+  const a2aPath = join(__dirname, 'a2a', 'orchestrator.js');
+  if (!existsSync(a2aPath)) {
+    console.error('❌ A2A module not found. Make sure the project is built.');
+    console.error('   Run: npm run build');
+    process.exit(1);
+  }
+
+  const { A2AOrchestrator } = await import(join(__dirname, 'a2a', 'orchestrator.js'));
+
+  const config: WorkflowConfig = {
+    task,
+    autoDetect: true,
+    interactive: !options.noInteractive,
+    retryConfig: {
+      maxRetries: 3,
+      retryOnErrors: ['timeout', 'network', 'temporary'],
+      backoffMs: 1000,
+      exponentialBackoff: true
+    },
+    maxDuration: 300000 // 5 minutes max
+  };
+
+  const orchestrator = new A2AOrchestrator(
+    options.directory,
+    config.interactive,
+    (state: WorkflowState) => {
+      // Progress callback - could be used for UI updates
+    }
+  );
+
+  const result = await orchestrator.execute(config);
+
+  // Exit with appropriate code
+  process.exit(result.status === 'completed' ? 0 : 1);
 }
 
 function showHelp() {
   console.log(`
 ╔══════════════════════════════════════════════════════════════════════╗
-║                    TRUE Multi-Agent System V11                        ║
+║                    TRUE Multi-Agent System V12                        ║
 ║                         Standalone CLI                                ║
+║                    🤖 A2A Workflow Enabled                           ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
 Usage:
-  npx tsx cli.ts "task description"                Execute a task
+  npx tsx cli.ts "task description"                Single agent mode
+  npx tsx cli.ts --a2a "task description"          A2A workflow mode 👈 NEW
   npx tsx cli.ts --persona architect "fix bug"     Use specific persona
   npx tsx cli.ts --parallel "task1" "task2"        Run in parallel
-  npx tsx cli.ts --thinking think-hard "analyze"   Set thinking level
 
 Options:
-  --persona <name>    Specific persona
+  --a2a               Enable A2A workflow (agents talk to each other)
+  --no-interactive    Run A2A without pauses (auto-pilot mode)
+  --persona <name>    Specific persona (single agent mode)
   --parallel          Run multiple tasks in parallel
   --thinking <level>  none, think, think-hard, ultrathink
   --model <name>      sonnet, opus
   --directory <path>  Working directory
 
+A2A Mode:
+  Agents automatically coordinate based on task:
+  • EXPLORER → Research best practices
+  • ARCHAEOLOGIST → Analyze existing code
+  • ARCHITECT → Implement solution
+  • TEST → Verify implementation
+  • SENTINEL → Final verification
+
+  Interactive controls during workflow:
+  [Enter]    Continue to next agent
+  s          Stop workflow
+  p [msg]    Pass message to next agent
+  r          Retry current agent
+  j [persona] Jump to different persona
+
 Personas:
-  CORE (always active):
+  CORE (quality & orchestration):
     sentinel      🛡️  Completion verification
     referee       🎯  Final decision (1-10 score)
     recorder      📋  State & checkpoint
     auditor       🔍  Quality gate
 
-  SPECIALIST (on-demand):
+  SPECIALIST (domain experts):
     architect     🏗️  Builder & implementer
     explorer      🌐  Researcher
     analyst       🔬  Data analyst
@@ -408,10 +485,17 @@ Personas:
     archaeologist 🏛️  Code analyst
 
 Examples:
-  npx tsx cli.ts "Implement user authentication"
+  # A2A workflow (recommended for complex tasks)
+  npx tsx cli.ts --a2a "Implement user authentication"
+
+  # A2A without interaction (auto-pilot)
+  npx tsx cli.ts --a2a --no-interactive "Fix the login bug"
+
+  # Single agent
   npx tsx cli.ts --persona explorer "Find React best practices"
-  npx tsx cli.ts --parallel "Fix backend bug" "Update frontend"
-  npx tsx cli.ts --persona sentinel "Verify implementation"
+
+  # Parallel tasks
+  npx tsx cli.ts --parallel "Fix backend" "Update frontend"
 
 📚 Documentation: master.md, REFERENCE.md
     `);
