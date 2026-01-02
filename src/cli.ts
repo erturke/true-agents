@@ -205,9 +205,12 @@ function detectPersona(task: string): Persona {
 }
 
 // ==========================================
-// PERSONA FILE LOADER
+// PERSONA FILE LOADER (Reserved for future use)
 // ==========================================
 
+// Function reserved for loading full persona definitions from .md files
+// Currently using compact prompts to avoid shell parsing issues
+// TODO: Implement proper file-based persona loading with safe argument passing
 function loadPersonaPrompt(persona: Persona): string {
   const config = PERSONAS[persona];
   const fullPath = join(__dirname, config.file);
@@ -310,7 +313,7 @@ function spawnClaude(task: string, options: CLIOptions): Promise<number> {
 async function spawnParallel(tasks: string[], options: CLIOptions): Promise<void> {
   console.log(`\n🔄 Running ${tasks.length} tasks in parallel...\n`);
 
-  const promises = tasks.map((task, i) => {
+  const promises = tasks.map((task) => {
     return spawnClaude(task, { ...options, persona: options.persona || detectPersona(task) });
   });
 
