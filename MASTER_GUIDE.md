@@ -13,9 +13,9 @@
 1. [System Overview](#system-overview)
 2. [Architecture Comparison](#architecture-comparison)
 3. [TRUE Agents Usage](#true-agents-usage)
-4. [Antigravity Integration](#antigravity-integration)
+4. [Hybrid Architecture](#hybrid-architecture)
 5. [Hybrid Architecture](#hybrid-architecture)
-6. [SmartHukuk Implementation](#smarthukuk-implementation)
+6. [Example Implementation](#example-implementation)
 7. [Best Practices](#best-practices)
 8. [Quick Start Guide](#quick-start-guide)
 
@@ -43,7 +43,7 @@
 │   │            (TRUE Agents: Autonomous Workers)                       │   │
 │   │                                                                      │   │
 │   │   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐           │   │
-│   │   │ CRAWLER  │  │ ANALYZER │  │ ENRICHER │  │ VALIDATOR│           │   │
+│   │   │ COLLECTOR │  │ ANALYZER │  │ ENRICHER │  │ VALIDATOR│           │   │
 │   │   │  Agent   │  │  Agent   │  │  Agent   │  │  Agent   │           │   │
 │   │   └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘           │   │
 │   │        │             │             │             │                  │   │
@@ -272,11 +272,11 @@ class ReactiveAgent extends TrueAgent {
     // Subscribe to system events
     this.on('system:pause', () => this.pause());
     this.on('system:resume', () => this.resume());
-    this.on('crawler:complete', (data) => this.onCrawlComplete(data));
+    this.on('ingestion:complete', (data) => this.onIngestionComplete(data));
   }
 
-  private async onCrawlComplete(data: any): Promise<void> {
-    // React to crawl completion
+  private async onIngestionComplete(data: any): Promise<void> {
+    // React to ingestion completion
     await this.send('analyzer-agent-1', MessageType.TRIGGER, {
       type: 'ANALYZE',
       payload: data.results
@@ -300,8 +300,8 @@ class ReactiveAgent extends TrueAgent {
 │       │                                                                      │
 │       ▼                                                                      │
 │   ┌──────────────┐        ┌──────────────────────────────────────┐         │
-│   │ Antigravity  │ ────→  │  Plan: What agents to use             │         │
-│   │  (LLM Brain) │        │  - Agent types needed                │         │
+│   │ External AI  │ ────→  │  Plan: What agents to use             │         │
+│   │  (Brain)     │        │  - Agent types needed                │         │
 │   └──────────────┘        │  - Execution order/priority          │         │
 │           │               │  - Configuration for each            │         │
 │           │               └──────────────────────────────────────┘         │
@@ -309,12 +309,12 @@ class ReactiveAgent extends TrueAgent {
 │           ▼                              ▼                                 │
 │   ┌─────────────────────────────────────────────────────────────────────┐  │
 │   │                    BRIDGE LAYER                                     │  │
-│   │                  AntigravityBridge.ts                               │  │
+│   │                  AIBridge.ts                                        │  │
 │   │                                                                      │  │
-│   │   - Parse Antigravity plan                                          │  │
+│   │   - Parse AI plan                                                   │  │
 │   │   - Spawn/Configure TRUE agents                                     │  │
 │   │   - Monitor execution                                                │  │
-│   │   - Report results back to Antigravity                              │  │
+│   │   - Report results back to AI                                       │  │
 │   └─────────────────────────────────────────────────────────────────────┘  │
 │           │                                                                  │
 │           ▼                                                                  │
@@ -322,8 +322,8 @@ class ReactiveAgent extends TrueAgent {
 │   │                    TRUE AGENTS SWARM                                │  │
 │   │                                                                      │  │
 │   │   ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐                 │  │
-│   │   │Crawler  │→│Analyzer │→│Enricher │→│Validator│                 │  │
-│   │   │ Agent   │ │ Agent   │ │ Agent   │ │ Agent   │                 │  │
+│   │   │Data     │→│Analyzer │→│Enricher │→│Validator│                 │  │
+│   │   │Collector│ │ Agent   │ │ Agent   │ │ Agent   │                 │  │
 │   │   └─────────┘ └─────────┘ └─────────┘ └─────────┘                 │  │
 │   └─────────────────────────────────────────────────────────────────────┘  │
 │                                                                              │
@@ -333,13 +333,13 @@ class ReactiveAgent extends TrueAgent {
 ### Bridge Implementation
 
 ```typescript
-// bridge/AntigravityBridge.ts
+// bridge/AIBridge.ts
 
 import { EventEmitter } from 'events';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
-interface AntigravityPlan {
+interface AIPlan {
   agents: AgentConfig[];
   workflow: WorkflowStep[];
   timeout?: number;
@@ -352,21 +352,21 @@ interface WorkflowStep {
   payload: any;
 }
 
-export class AntigravityBridge extends EventEmitter {
+export class AIBridge extends EventEmitter {
   private inboxDir: string;
   private outboxDir: string;
   private agents: Map<string, TrueAgent> = new Map();
 
-  constructor(inboxDir: string = '.antigravity/inbox', outboxDir: string = '.antigravity/outbox') {
+  constructor(inboxDir: string = '.ai/inbox', outboxDir: string = '.ai/outbox') {
     super();
     this.inboxDir = inboxDir;
     this.outboxDir = outboxDir;
   }
 
   /**
-   * Wait for Antigravity plan in inbox
+   * Wait for AI plan in inbox
    */
-  async waitForPlan(timeoutMs: number = 300000): Promise<AntigravityPlan | null> {
+  async waitForPlan(timeoutMs: number = 300000): Promise<AIPlan | null> {
     const startTime = Date.now();
 
     while (Date.now() - startTime < timeoutMs) {
@@ -374,7 +374,7 @@ export class AntigravityBridge extends EventEmitter {
       if (files.length > 0) {
         const planFile = files[0];
         const content = readFileSync(planFile, 'utf-8');
-        const plan = JSON.parse(content) as AntigravityPlan;
+        const plan = JSON.parse(content) as AIPlan;
 
         // Archive processed plan
         this.archiveFile(planFile, 'processed');
@@ -388,9 +388,9 @@ export class AntigravityBridge extends EventEmitter {
   }
 
   /**
-   * Execute Antigravity plan with TRUE agents
+   * Execute AI plan with TRUE agents
    */
-  async executePlan(plan: AntigravityPlan, messageBus: MessageBus): Promise<any> {
+  async executePlan(plan: AIPlan, messageBus: MessageBus): Promise<any> {
     const results: any[] = [];
 
     try {
@@ -448,7 +448,7 @@ export class AntigravityBridge extends EventEmitter {
   }
 
   /**
-   * Write results to outbox for Antigravity
+   * Write results to outbox for AI
    */
   reportResults(results: any, requestId: string): void {
     const outFile = join(this.outboxDir, `res_${requestId}.json`);
@@ -459,8 +459,8 @@ export class AntigravityBridge extends EventEmitter {
   private spawnAgent(config: AgentConfig, messageBus: MessageBus): TrueAgent {
     // Factory pattern for agent creation
     switch (config.type) {
-      case 'CRAWLER':
-        return new CrawlerAgent(config, messageBus);
+      case 'COLLECTOR':
+        return new CollectorAgent(config, messageBus);
       case 'ANALYZER':
         return new AnalyzerAgent(config, messageBus);
       case 'ENRICHER':
@@ -513,31 +513,31 @@ export class AntigravityBridge extends EventEmitter {
 
 ```bash
 # 1. Start TRUE Agent bridge
-node dist/antigravity-bridge.js
+node dist/ai-bridge.js
 
-# 2. User asks Antigravity to create a plan
-User: "Create a plan to crawl 1000 decisions from all daire types"
+# 2. User asks AI to create a plan
+User: "Create a plan to collect data"
 
-# 3. Antigravity generates plan and saves to .antigravity/inbox/plan_001.json
+# 3. AI generates plan and saves to .ai/inbox/plan_001.json
 {
   "agents": [
-    {"id": "crawler-1", "type": "CRAWLER", "config": {"daireType": "Ceza"}},
-    {"id": "crawler-2", "type": "CRAWLER", "config": {"daireType": "Hukuk"}},
+    {"id": "collector-1", "type": "COLLECTOR", "config": {"source": "TypeA"}},
+    {"id": "collector-2", "type": "COLLECTOR", "config": {"source": "TypeB"}},
     {"id": "analyzer-1", "type": "ANALYZER"}
   ],
   "workflow": [
-    {"from": "system", "to": "crawler-1", "trigger": "START", "payload": {...}},
-    {"from": "system", "to": "crawler-2", "trigger": "START", "payload": {...}},
-    {"from": "crawler-1", "to": "analyzer-1", "trigger": "ON_COMPLETE"},
-    {"from": "crawler-2", "to": "analyzer-1", "trigger": "ON_COMPLETE"}
+    {"from": "system", "to": "collector-1", "trigger": "START", "payload": {...}},
+    {"from": "system", "to": "collector-2", "trigger": "START", "payload": {...}},
+    {"from": "collector-1", "to": "analyzer-1", "trigger": "ON_COMPLETE"},
+    {"from": "collector-2", "to": "analyzer-1", "trigger": "ON_COMPLETE"}
   ]
 }
 
 # 4. Bridge reads plan, spawns agents, executes workflow
 
-# 5. Results written to .antigravity/outbox/res_001.json
+# 5. Results written to .ai/outbox/res_001.json
 
-# 6. Antigravity reads results and provides summary to user
+# 6. AI reads results and provides summary to user
 ```
 
 ---
@@ -563,7 +563,7 @@ User: "Create a plan to crawl 1000 decisions from all daire types"
 │       │ YES           │ NO                                                   │
 │       ▼               ▼                                                      │
 │   ┌──────────┐   ┌──────────────────────────────────────────┐               │
-│   │Antigravity│   │ Can TRUE Agents handle this autonomously?│               │
+│   │AI Planner │   │ Can TRUE Agents handle this autonomously?│               │
 │   │ (Plan)   │   └────────────────────┬─────────────────────┘               │
 │   └─────┬────┘                        │                                     │
 │         │                      ┌───────┴───────┐                              │
@@ -587,8 +587,8 @@ User: "Create a plan to crawl 1000 decisions from all daire types"
 
 ### Pattern Matrix
 
-| Pattern | Antigravity Role | TRUE Agents Role | Use Case |
-|---------|-----------------|------------------|----------|
+| Pattern | AI Role | TRUE Agents Role | Use Case |
+|---------|---------|------------------|----------|
 | **Planner-Executor** | Creates execution plan | Executes plan | Complex workflows |
 | **Supervisor** | Monitors progress | Autonomous workers | Continuous operations |
 | **Analyst** | Researches decisions | Implements changes | System improvements |
@@ -596,15 +596,15 @@ User: "Create a plan to crawl 1000 decisions from all daire types"
 
 ---
 
-## 6. SMARTHUKUK IMPLEMENTATION
+## 6. EXAMPLE IMPLEMENTATION
 
-### Agent Types for SmartHukuk
+### Agent Types for the Project
 
 ```yaml
 Domain_Agents:
-  CrawlerAgent:
+  CollectorAgent:
     responsibilities:
-      - Web scraping decisions
+      - Data collection decisions
       - Respecting rate limits
       - Stealth mode operation
     triggers:
@@ -618,7 +618,7 @@ Domain_Agents:
       - Gap detection
       - Trend analysis
     triggers:
-      - On crawl complete
+      - On collection complete
       - On user request
 
   EnricherAgent:
@@ -674,34 +674,34 @@ Control_Agents:
       - Result aggregation
 ```
 
-### SmartHukuk Workflow Example
+### Workflow Example
 
 ```typescript
-// SmartHukuk workflow: Continuous data collection
+// Workflow: Continuous data collection
 
 // 1. Sentinel detects gap
 await sentinelAgent.detectGaps();
 
-// 2. Sentinel triggers Crawler
-await crawlerAgent.send('crawler-1', MessageType.TRIGGER, {
+// 2. Sentinel triggers Collector
+await collectorAgent.send('collector-1', MessageType.TRIGGER, {
   type: 'FILL_GAP',
   target: {
-    daireType: 'Ceza',
+    source: 'TypeA',
     dateRange: ['2024-01-01', '2024-01-31']
   }
 });
 
-// 3. Crawler completes → triggers Analyzer
-// (inside CrawlerAgent)
+// 3. Collector completes → triggers Analyzer
+// (inside CollectorAgent)
 await this.send('analyzer-1', MessageType.TRIGGER, {
   type: 'ANALYZE_NEW',
   payload: results
 });
 
-// 4. Analyzer finds more gaps → triggers Crawler again
+// 4. Analyzer finds more gaps → triggers Collector again
 // (inside AnalyzerAgent)
 if (gaps.length > 0) {
-  await this.send('crawler-2', MessageType.TRIGGER, {
+  await this.send('collector-2', MessageType.TRIGGER, {
     type: 'FILL_GAP',
     target: gaps[0]
   });
@@ -826,7 +826,7 @@ Monitoring:
 
 ```bash
 # 1. Navigate to true-agents directory
-cd /Users/emre/SmartHukuk/true-agents
+cd /path/to/project/true-agents
 
 # 2. Install dependencies
 npm install
@@ -847,43 +847,43 @@ touch 10-my-agent.ts
 npx tsx 10-my-agent.ts
 ```
 
-### Integration with SmartHukuk Backend
+### Integration with Host Backend
 
 ```bash
 # 1. Copy agents to backend
-cp -r true-agents /Users/emre/SmartHukuk/backend/src/agents
+cp -r true-agents /path/to/backend/src/agents
 
 # 2. Install in backend
-cd /Users/emre/SmartHukuk/backend
+cd /path/to/backend
 npm install pg uuid eventemitter3
 
 # 3. Import and use
-import { CrawlerAgent } from './agents/07-domain-crawler.js';
+import { CollectorAgent } from './agents/07-domain-collector.js';
 ```
 
-### Antigravity Integration Setup
+### AI Integration Setup
 
 ```bash
-# 1. Create antigravity directories
-mkdir -p .antigravity/{inbox,outbox,archive}
+# 1. Create AI directories
+mkdir -p .ai/{inbox,outbox,archive}
 
 # 2. Start bridge
-node dist/antigravity-bridge.js
+node dist/ai-bridge.js
 
 # 3. Create plan in inbox
-cat > .antigravity/inbox/plan_001.json << EOF
+cat > .ai/inbox/plan_001.json << EOF
 {
   "agents": [
-    {"id": "crawler-1", "type": "CRAWLER"}
+    {"id": "collector-1", "type": "COLLECTOR"}
   ],
   "workflow": [
-    {"from": "system", "to": "crawler-1", "trigger": "START"}
+    {"from": "system", "to": "collector-1", "trigger": "START"}
   ]
 }
 EOF
 
 # 4. Check results in outbox
-cat .antigravity/outbox/res_001.json
+cat .ai/outbox/res_001.json
 ```
 
 ---
@@ -900,6 +900,6 @@ cat .antigravity/outbox/res_001.json
 
 ---
 
-**Document Owner:** SmartHukuk Development Team
+**Document Owner:** Development Team
 **Last Updated:** 2025-01-01
 **Status:** Active

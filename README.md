@@ -1,17 +1,17 @@
-# @true-agents/core
+# @true-agents/core (Maestro V6)
 
-> Persona-based multi-agent orchestration framework with parallel execution, dynamic persona creation, and project management.
+> **True Agents V11**: Persona-based multi-agent orchestration framework with parallel execution, dynamic persona creation, and project management.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
 
-- **9 Built-in Personas** - 4 CORE (always active) + 5 SPECIALIST (on-demand)
+- **9 Built-in Personas (V11)** - 4 CORE (always active) + 5 SPECIALIST (on-demand)
+- **Maestro V6 Engine** - Intent-first orchestration with dynamic handoffs
 - **Auto Persona Detection** - Automatically selects the right persona for your task
-- **Parallel Execution** - Run multiple agents simultaneously
+- **Parallel Execution** - Run multiple agents simultaneously (Swarm Mode)
 - **Dynamic Persona Creation** - Create custom personas at runtime
 - **Project Management** - UUID-based project tracking with persistent storage
-- **CLI Tool** - Standalone command-line interface included
 
 ## Installation (Git)
 
@@ -109,8 +109,6 @@ console.log(PERSONAS);
 ## Documentation
 
 - **[USAGE.md](./USAGE.md)** - Comprehensive usage guide with Git integration
-- **[master.md](./master.md)** - Complete system reference with all personas
-- **[MASTER_GUIDE.md](./MASTER_GUIDE.md)** - Detailed usage guide
 
 ## Project Structure
 

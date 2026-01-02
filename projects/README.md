@@ -28,7 +28,7 @@ projects/
 Projects use `{category}-{name}-{YYMMDD}` format:
 
 - `web-ecommerce-250102` - Web application project
-- `data-crawler-250102` - Data analysis project
+- `data-pipeline-250102` - Data analysis project
 - `refactor-auth-250102` - Refactoring project
 
 ## Creating a New Project
