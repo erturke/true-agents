@@ -15,6 +15,7 @@ import { AgentRuntime } from './agent-runtime.js';
 import { HandoffParser } from './handoff-parser.js';
 import { RetryManager } from './retry-manager.js';
 import { InteractiveController, UserIntervention } from './interactive.js';
+import { TaskAnalyzer } from './task-analyzer.js';
 
 /**
  * Main A2A orchestrator
@@ -46,12 +47,18 @@ export class A2AOrchestrator {
    * Execute a workflow
    */
   async execute(config: WorkflowConfig): Promise<WorkflowState> {
+    // Define personas if not provided
+    let personas = config.personas;
+    if (!personas) {
+      personas = this.detectPersonas(config.task);
+    }
+
     // Initialize workflow state
     const state: WorkflowState = {
       id: randomUUID(),
       config,
       currentPersonaIndex: 0,
-      personas: config.personas || this.detectPersonas(config.task),
+      personas,
       results: [],
       startTime: Date.now(),
       status: 'running'
@@ -101,7 +108,8 @@ export class A2AOrchestrator {
         task: state.config.task,
         previousOutputs: state.results.map(r => r.output),
         conversationHistory: this.buildConversationHistory(state),
-        userMessages: userMessages.length > 0 ? userMessages : undefined
+        userMessages: userMessages.length > 0 ? userMessages : undefined,
+        documents: (state.config as any).documents // Access documents from config
       };
 
       // Execute agent with retry
@@ -237,41 +245,16 @@ export class A2AOrchestrator {
    * Detect required personas from task
    */
   private detectPersonas(task: string): Persona[] {
-    const detected: Persona[] = [];
-    const lower = task.toLowerCase();
+    const analyzer = new TaskAnalyzer();
+    const analysis = analyzer.analyze(task);
 
-    // Always start with explorer for complex tasks
-    if (lower.includes('implement') || lower.includes('build') || lower.includes('create')) {
-      detected.push('explorer');
-    }
+    // Print analysis for visibility
+    console.log(`\n🧠 Task Analysis:`);
+    console.log(`   Complexity: ${analysis.complexity}`);
+    console.log(`   Actions: ${analysis.actionTypes.join(', ')}`);
+    console.log(`   Personas: ${analysis.suggestedPersonas.join(' → ')}`);
 
-    // Code analysis needed?
-    if (lower.includes('fix') || lower.includes('refactor') || lower.includes('understand')) {
-      detected.push('archaeologist');
-    }
-
-    // Implementation needed?
-    if (lower.includes('implement') || lower.includes('build') || lower.includes('create') ||
-        lower.includes('fix') || lower.includes('add')) {
-      detected.push('architect');
-    }
-
-    // Testing needed?
-    if (lower.includes('implement') || lower.includes('test') || lower.includes('verify')) {
-      detected.push('test');
-    }
-
-    // Always end with sentinel for verification
-    if (detected.length > 0) {
-      detected.push('sentinel');
-    }
-
-    // Default if nothing detected
-    if (detected.length === 0) {
-      detected.push('architect', 'sentinel');
-    }
-
-    return detected;
+    return analysis.suggestedPersonas;
   }
 
   /**

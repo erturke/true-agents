@@ -20,7 +20,9 @@ import { spawn } from 'child_process';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { readFileSync, existsSync } from 'fs';
-import type { WorkflowConfig, WorkflowState } from './types/a2a.js';
+import type { WorkflowConfig, WorkflowState, EnhancedWorkflowConfig, LoadedDocument } from './types/a2a.js';
+import { AutoDetector } from './a2a/auto-detector.js';
+import { DocumentLoader } from './a2a/document-loader.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -187,7 +189,7 @@ function detectPersona(task: string): Persona {
   // Check specialist personas first (more specific)
   for (const [name, config] of Object.entries(PERSONAS)) {
     if (config.id.startsWith('sentinel') || config.id.startsWith('referee') ||
-        config.id.startsWith('recorder') || config.id.startsWith('auditor')) {
+      config.id.startsWith('recorder') || config.id.startsWith('auditor')) {
       continue; // Skip core for now
     }
     for (const trigger of config.trigger) {
@@ -375,26 +377,50 @@ async function main() {
     process.exit(1);
   }
 
-  // A2A mode (NEW)
-  if (options.a2a) {
-    return runA2AWorkflow(tasks.join(' '), options);
-  }
+  const task = tasks.join(' ');
 
-  // Parallel mode
+  // Parallel mode (skips auto-detection for now)
   if (options.parallel) {
     await spawnParallel(tasks, options);
     return;
   }
 
-  // Single agent mode (default)
-  const code = await spawnClaude(tasks.join(' '), options);
+  // Auto-detect workflow mode
+  const detector = new AutoDetector();
+  const decision = detector.shouldUseA2A(task, options);
+
+  if (decision.useA2A) {
+    console.log(`\n🤖 Auto-detected A2A Mode: ${decision.reason}`);
+
+    // Load referenced documents
+    const docLoader = new DocumentLoader(options.directory);
+    const docs = await docLoader.loadFromTask(task);
+
+    if (docs.length > 0) {
+      console.log(`📚 Loaded ${docs.length} reference document(s)`);
+    }
+
+    return runA2AWorkflow(task, options, docs);
+  }
+
+  // Fallback to single agent (using detected or requested persona)
+  if (decision.fallbackPersona && !options.persona) {
+    options.persona = decision.fallbackPersona;
+    // console.log(`👉 Using recommended persona: ${options.persona}`);
+  }
+
+  // Single agent mode
+  const code = await spawnClaude(task, options);
   process.exit(code);
 }
 
 /**
  * Run A2A workflow (NEW)
  */
-async function runA2AWorkflow(task: string, options: CLIOptions): Promise<void> {
+/**
+ * Run A2A workflow (NEW)
+ */
+async function runA2AWorkflow(task: string, options: CLIOptions, documents: LoadedDocument[] = []): Promise<void> {
   // Dynamically import A2A modules (only when needed)
   const a2aPath = join(__dirname, 'a2a', 'orchestrator.js');
   if (!existsSync(a2aPath)) {
@@ -405,10 +431,11 @@ async function runA2AWorkflow(task: string, options: CLIOptions): Promise<void> 
 
   const { A2AOrchestrator } = await import(join(__dirname, 'a2a', 'orchestrator.js'));
 
-  const config: WorkflowConfig = {
+  const config: EnhancedWorkflowConfig = {
     task,
     autoDetect: true,
     interactive: !options.noInteractive,
+    documents, // Pass documents to config
     retryConfig: {
       maxRetries: 3,
       retryOnErrors: ['timeout', 'network', 'temporary'],

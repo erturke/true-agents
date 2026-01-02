@@ -181,6 +181,21 @@ function buildSystemPrompt(persona: Persona, context: AgentContext): string {
   let prompt = `You are ${config.name}.\n\n`;
   prompt += `${personaPrompt}\n\n`;
 
+  // Inject Reference Documents
+  if (context.documents && context.documents.length > 0) {
+    prompt += '\n╔════════════════════════════════════════════════════════════╗\n';
+    prompt += '║                    REFERENCE DOCUMENTS                   ║\n';
+    prompt += '╚════════════════════════════════════════════════════════════╝\n\n';
+
+    for (const doc of context.documents) {
+      prompt += `📄 File: ${doc.reference.value}\n`;
+      prompt += `   Size: ${doc.metadata.lines} lines\n`;
+      prompt += '   ────────────────────────────────────────────────────────\n';
+      prompt += `${doc.content}\n`;
+      prompt += '   ────────────────────────────────────────────────────────\n\n';
+    }
+  }
+
   if (conversationHistory) {
     prompt += `${conversationHistory}\n`;
     prompt += `Use the information from previous agents to continue the workflow.\n\n`;
