@@ -58,9 +58,26 @@ source ~/.zshrc
 
 ---
 
-## 🚀 Usage
+## 🧠 Prompt Engineering for Meta-Agents
 
-### CLI Tool (Simplest)
+Instead of running commands yourself, you can instruct your AI assistant to run them. The key is providing the **Instruction Protocol** (`REFERENCE.md`) to the context.
+
+### The "Do It For Me" Prompts
+Add `@REFERENCE.md` to your context and use these prompts:
+
+| Goal | Prompt Example |
+|------|----------------|
+| **Feature** | "@REFERENCE.md Build a user profile page with Tailwind." |
+| **Research** | "@REFERENCE.md Research the best Redis client and explain why." |
+| **Refactor** | "@REFERENCE.md Refactor @user.ts to be functional." |
+| **Verify** | "@REFERENCE.md Verify that the build works and tests pass." |
+
+### Why this works
+`REFERENCE.md` contains a "System Prompt" that overrides your AI's default behavior of just "suggesting" code. It forces the AI into **Operator Mode**, where it executes terminal commands autonomously.
+
+---
+
+## 🚀 Manual CLI Usage (Fallback)
 
 ```bash
 # Run from true-agents folder

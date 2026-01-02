@@ -20,7 +20,26 @@ True Agents V11 introduces **Auto A2A (Agent-to-Agent)** mode. You no longer nee
 
 ---
 
-## ⚡ Quick Start
+## 🧠 prompt-driven (The "Meta-Agent" Workflow)
+The most powerful way to use True Agents V11 is to let your AI assistant (Claude, Cursor, Antigravity) drive the system for you.
+
+**How to do it:**
+1.  Open your IDE (VS Code / Cursor).
+2.  Add `@REFERENCE.md` to your prompt context.
+3.  Ask for what you want.
+
+**Example Prompt:**
+> "Read @REFERENCE.md. I want to add a dark mode toggle to the settings page. Execute the necessary agents."
+
+**What happens:**
+1.  Your AI reads `REFERENCE.md` and realizes it has permission to run the CLI.
+2.  It constructs the command: `npx tsx src/cli.ts "Add dark mode toggle to settings page"`.
+3.  It runs the command in your terminal.
+4.  The True Agents swarm executes the task.
+
+---
+
+## ⚡ Manual Quick Start
 
 ### 1. Installation
 ```bash
