@@ -255,14 +255,8 @@ function spawnClaude(task: string, options: CLIOptions): Promise<number> {
     const model = options.model || config.model || 'sonnet';
     const directory = options.directory || process.cwd();
 
-    // Load persona prompt
-    const personaPrompt = loadPersonaPrompt(personaKey);
-
-    // Build full prompt
-    let fullPrompt = `${personaPrompt}\n\n`;
-    fullPrompt += `Thinking mode: ${thinking}\n`;
-    fullPrompt += `Task: ${task}\n`;
-    fullPrompt += `\n🏷️ MARKER: ${config.name}-${Date.now()}`;
+    // Load persona prompt (available for reference, full content loading in future versions)
+    // const personaPrompt = loadPersonaPrompt(personaKey);
 
     console.log(`\n${config.description}`);
     console.log(`📂 Directory: ${directory}`);
@@ -271,17 +265,30 @@ function spawnClaude(task: string, options: CLIOptions): Promise<number> {
     console.log(`\n🚀 Executing...\n`);
 
     // Spawn Claude Code CLI
-    // Usage: claude --print --system-prompt "..." "task"
+    // Use environment variable to pass persona prompt (safe from shell parsing)
+    const env = {
+      ...process.env,
+      TRUE_AGENTS_PERSONA: config.name,
+      TRUE_AGENTS_THINKING: thinking,
+      TRUE_AGENTS_MODE: personaKey
+    };
+
     const args = [
       '--print',
-      '--system-prompt', fullPrompt,
+      '--model', model,
+      '--system-prompt', `You are ${config.name}. Use ${personaKey} persona. ${thinking} mode.`,
+      '--',
       task
     ];
+
+    // Debug: log the exact command
+    // console.error('DEBUG: Spawning claude with args:', JSON.stringify(args));
 
     const child = spawn('claude', args, {
       cwd: directory,
       stdio: 'inherit',
-      shell: true
+      shell: false,
+      env
     });
 
     child.on('close', (code) => {
