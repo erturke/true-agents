@@ -2,7 +2,6 @@
 
 > Persona-based multi-agent orchestration framework with parallel execution, dynamic persona creation, and project management.
 
-[![npm version](https://badge.fury.io/js/%40true-agents%2Fcore.svg)](https://www.npmjs.com/package/@true-agents/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
@@ -14,42 +13,38 @@
 - **Project Management** - UUID-based project tracking with persistent storage
 - **CLI Tool** - Standalone command-line interface included
 
-## Installation
+## Installation (Git)
+
+### As Submodule (Recommended)
 
 ```bash
-npm install @true-agents/core
+git submodule add https://github.com/erturke/true-agents.git libs/true-agents
+cd libs/true-agents
+npm install
+```
+
+### Or Clone Directly
+
+```bash
+git clone https://github.com/erturke/true-agents.git
+cd true-agents
+npm install
 ```
 
 ## Quick Start
 
-### CLI Usage
-
 ```bash
-# Use the CLI tool
-npx @true-agents/core "Implement user authentication"
+# Run CLI
+npx tsx src/cli.ts "Implement user authentication"
 
 # Use specific persona
-npx @true-agents/core --persona mimar "Fix the bug"
+npx tsx src/cli.ts --persona mimar "Fix the bug"
 
 # Run parallel tasks
-npx @true-agents/core --parallel "Fix backend" "Update frontend"
+npx tsx src/cli.ts --parallel "Fix backend" "Update frontend"
 
 # Show help
-npx @true-agents/core --help
-```
-
-### Programmatic Usage
-
-```typescript
-import { TrueCLI, PERSONAS } from '@true-agents/core';
-
-const cli = new TrueCLI();
-await cli.run(['status']);
-
-// Get available personas
-console.log(PERSONAS);
-// { CORE: ['SENTINEL', 'HAKEM', 'KAYITCI', 'DENETÇI'],
-//   SPECIALIST: ['MİMAR', 'KAŞIF', 'ANALİZCİ', 'TEST', 'ARKEOLOG'] }
+npx tsx src/cli.ts --help
 ```
 
 ## Personas
@@ -73,38 +68,47 @@ console.log(PERSONAS);
 | TEST | 🧪 | Verifier | test, verify |
 | ARKEOLOG | 🏛️ | Code analyst | understand, structure |
 
-## CLI Options
+## Usage in Your Project
 
-```
-Usage: true-agents [options] [task...]
-
-Options:
-  --persona <name>    Specific persona (mimar, kasif, analizci, etc.)
-  --parallel          Run multiple tasks in parallel
-  --thinking <level>  none, think, think-hard, ultrathink
-  --model <name>      sonnet, opus
-  --directory <path>  Working directory
-  --help              Show help
-```
-
-## Examples
+### As Submodule
 
 ```bash
-# Research task
-true-agents --persona kasif "Find React 19 best practices"
+# Add to your project
+git submodule add https://github.com/erturke/true-agents.git libs/true-agents
 
-# Build task
-true-agents --persona mimar "Implement OAuth login"
+# Use in your project
+cd libs/true-agents
+npx tsx src/cli.ts --persona mimar "Implement feature"
+```
 
-# Verification
-true-agents --persona sentinel "Verify the implementation"
+### Programmatic Usage
 
-# Parallel execution
-true-agents --parallel "Analyze backend" "Analyze frontend" "Test API"
+```typescript
+import { TrueCLI, PERSONAS } from './libs/true-agents/src/index.js';
+
+const cli = new TrueCLI();
+await cli.run(['status']);
+
+console.log(PERSONAS);
+// { CORE: ['SENTINEL', 'HAKEM', 'KAYITCI', 'DENETÇI'],
+//   SPECIALIST: ['MİMAR', 'KAŞIF', 'ANALİZCİ', 'TEST', 'ARKEOLOG'] }
+```
+
+### Add Scripts to package.json
+
+```json
+{
+  "scripts": {
+    "agent": "tsx libs/true-agents/src/cli.ts",
+    "agent:build": "tsx libs/true-agents/src/cli.ts --persona mimar",
+    "agent:research": "tsx libs/true-agents/src/cli.ts --persona kasif"
+  }
+}
 ```
 
 ## Documentation
 
+- **[USAGE.md](./USAGE.md)** - Comprehensive usage guide with Git integration
 - **[master.md](./master.md)** - Complete system reference with all personas
 - **[MASTER_GUIDE.md](./MASTER_GUIDE.md)** - Detailed usage guide
 
