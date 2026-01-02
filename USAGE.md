@@ -1,289 +1,195 @@
-# @true-agents/core - Kullanım Kılavuzu (Git ile)
+# @true-agents/core - Usage Guide (Git Integration)
 
-Bu rehber, ayrı projelerde true-agents paketini **Git** üzerinden nasıl kullanacağınızı gösterir.
+This guide demonstrates how to use `true-agents` in your projects via **Git**.
 
-## 📦 Kurulum (Git ile)
+## 📦 Installation (Git)
 
-### Yöntem 1: Submodule Olarak Ekleme (Önerilen)
+### Method 1: Add as Submodule (Recommended)
 
-Projenize true-agents'ı git submodule olarak ekleyin:
+Add `true-agents` as a git submodule to your project:
 
 ```bash
 cd your-project
 
-# Submodule olarak ekle
+# Add as submodule
 git submodule add https://github.com/erturke/true-agents.git libs/true-agents
 
-# Submodule'ı başlat
+# Initialize submodule
 git submodule update --init --recursive
 
-# Bağımlılıkları yükle
+# Install dependencies
 cd libs/true-agents
 npm install
 cd ../..
 ```
 
-### Yöntem 2: Direkt Klonlama
+### Method 2: Direct Clone
 
-Projenizin içinde `libs/` klasörüne klonlayın:
+Clone directly into the `libs/` directory of your project:
 
 ```bash
 cd your-project
 mkdir -p libs
 cd libs
 
-# true-agents'ı klonla
+# Clone true-agents
 git clone https://github.com/erturke/true-agents.git
 
-# Bağımlılıkları yükle
+# Install dependencies
 cd true-agents
 npm install
 ```
 
-### Yöntem 3: Global Kullanım
+### Method 3: Global Usage
 
-Sistem genelinde kullanmak için:
+To use system-wide:
 
 ```bash
-# Kullanıcı dizinine klonla
+# Clone to user directory
 cd ~
 git clone https://github.com/erturke/true-agents.git
 cd true-agents
 npm install
 
-# Path'e ekle (bash/zsh)
+# Add to Path (bash/zsh)
 echo 'export PATH="$HOME/true-agents:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
 ---
 
-## 🚀 Kullanım
+## 🚀 Usage
 
-### CLI Aracı (En Basit)
+### CLI Tool (Simplest)
 
 ```bash
-# true-agents klasöründen çalıştırın
+# Run from true-agents folder
 cd libs/true-agents
 npx tsx src/cli.ts "Implement user authentication"
 
-# Veya global kurduysanız
+# Or if installed globally
 true-agents "Implement user authentication"
 ```
 
-### Persona Seçili Kullanım
+### Auto A2A Mode (Whistling Giraffe)
+
+The system automatically detects complex tasks and documents:
+
+```bash
+# Auto-detects need for multi-agent workflow
+npx tsx src/cli.ts "Research best DB practices and implement schema"
+
+# Loads referenced document as context
+npx tsx src/cli.ts "Update auth logic based on @api_specs.md"
+```
+
+### Persona Specific Usage
 
 ```bash
 cd libs/true-agents
 
-# MİMAR ile kod yazdırma
-npx tsx src/cli.ts --persona mimar "Fix the bug in payment module"
+# ARCHITECT for coding
+npx tsx src/cli.ts --persona architect "Fix the bug in payment module"
 
-# KAŞIF ile araştırma
-npx tsx src/cli.ts --persona kasif "Find React 19 best practices"
+# EXPLORER for research
+npx tsx src/cli.ts --persona explorer "Find React 19 best practices"
 
-# Paralel çalıştırma
+# Parallel Execution
 npx tsx src/cli.ts --parallel "Fix backend" "Update frontend" "Run tests"
 ```
 
-### Programatik Kullanım
-
-Projenizden true-agents'ı import edin:
-
-```typescript
-// your-project/src/agent.ts
-import { TrueCLI, PERSONAS } from '../libs/true-agents/src/index.js';
-
-class MyAgentSystem {
-  private cli: TrueCLI;
-
-  constructor() {
-    this.cli = new TrueCLI();
-  }
-
-  async executeTask(task: string) {
-    await this.cli.run(['cli', task]);
-  }
-
-  async showStatus() {
-    await this.cli.run(['status']);
-  }
-
-  getPersonas() {
-    return PERSONAS;
-  }
-}
-
-// Kullanım
-const agent = new MyAgentSystem();
-await agent.executeTask("Analyze database schema");
-```
-
 ---
 
-## 🎯 Gerçek Hayat Senaryoları
+## 💻 IDE Integration (Antigravity & VS Code)
 
-### Senaryo 1: Full-Stack Web Uygulaması
+You can integrate `true-agents` directly into your IDE workflow.
 
-```bash
-my-web-app/
-├── frontend/
-├── backend/
-└── libs/
-    └── true-agents/          # Git submodule
+### Antigravity Integration
 
-# Backend için MİMAR persona
-cd libs/true-agents
-npx tsx src/cli.ts --persona mimar "Implement JWT authentication middleware"
+In Antigravity (or Cursor/VS Code), you can run agents directly from the terminal or via command palette if configured.
 
-# Frontend için KAŞIF persona
-npx tsx src/cli.ts --persona kasif "Find React state management best practices"
-```
+**1. Terminal Usage:**
+Simply open the integrated terminal and run:
+`npx tsx src/cli.ts "Your task here"`
 
-### Senaryo 2: Monorepo Yapısı
+**2. Referenced Context:**
+If you have a file open in your IDE (e.g., `user_controller.ts`), you can tell the agent to use it:
+`npx tsx src/cli.ts "Refactor @user_controller.ts to use async/await"`
 
-```bash
-my-monorepo/
-├── packages/
-│   ├── app/
-│   └── api/
-└── libs/
-    └── true-agents/          # Paylaşılan agent kütüphanesi
-
-# Her paket'ten agent kullanımı
-cd ../../libs/true-agents
-npx tsx src/cli.ts --persona mimar "Add user registration to app"
-npx tsx src/cli.ts --persona mimar "Create API endpoints for user service"
-```
-
-### Senaryo 3: Script Entegrasyonu
-
-Projenizin `package.json`'ına script ekleyin:
+**3. Tasks Configuration (`.vscode/tasks.json`):**
+Add this task to run agents with a shortcut:
 
 ```json
 {
-  "name": "my-project",
-  "scripts": {
-    "agent": "tsx libs/true-agents/src/cli.ts",
-    "agent:build": "tsx libs/true-agents/src/cli.ts --persona mimar",
-    "agent:research": "tsx libs/true-agents/src/cli.ts --persona kasif",
-    "agent:verify": "tsx libs/true-agents/src/cli.ts --persona sentinel",
-    "agent:test": "tsx libs/true-agents/src/cli.ts --persona test"
-  }
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "True Agent: Architect",
+      "type": "shell",
+      "command": "npx tsx ${workspaceFolder}/libs/true-agents/src/cli.ts --persona architect \"${input:task}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "task",
+      "description": "Task description",
+      "default": "Fix the selected code",
+      "type": "promptString"
+    }
+  ]
 }
 ```
 
-Kullanım:
+---
 
-```bash
-npm run agent:build -- "Implement new feature"
-npm run agent:research -- "Find best practices for X"
-npm run agent:verify -- "Check if everything is correct"
-```
+## 📚 Persona Reference
+
+### CORE Personas (Always Active)
+
+| Persona | Usage |
+|---------|-------|
+| `sentinel` | Result verification, completion check |
+| `referee` | Decision making, scoring, approval |
+| `recorder` | State tracking, checkpoints |
+| `auditor` | Quality control, reality check |
+
+### SPECIALIST Personas (On-Demand)
+
+| Persona | Trigger | Usage |
+|---------|---------|-------|
+| `architect` | build, implement, code | Coding, implementation |
+| `explorer` | research, find, search | Research, best practices |
+| `analyst` | analyze, data, metrics | Data analysis, metrics |
+| `test` | test, verify | Test writing, verification |
+| `archaeologist` | understand, structure | Code analysis, legacy understanding |
 
 ---
 
-## 📚 Persona Referansı
+## 🔄 Updates
 
-### CORE Personas (Her Zaman Aktif)
-
-| Persona | Kullanım Alanı |
-|---------|----------------|
-| `sentinel` | Sonuç doğrulama, tamamlanma kontrolü |
-| `hakem` | Karar verme, puanlama, onay |
-| `kayitci` | Durum takibi, checkpoint |
-| `denetci` | Kalite kontrol, reality check |
-
-### SPECIALIST Personas (Göre Göre)
-
-| Persona | Trigger | Kullanım Alanı |
-|---------|---------|----------------|
-| `mimar` | build, implement, code | Kod yazma, implementasyon |
-| `kasif` | research, find, search | Araştırma, best practices |
-| `analizci` | analyze, data, metrics | Veri analizi, metrikler |
-| `test` | test, verify | Test yazma, doğrulama |
-| `arkeolog` | understand, structure | Kod analizi, yapı anlama |
-
----
-
-## 🔄 Güncelleme
-
-Submodule kullanıyorsanız güncelleme:
+To update if using submodule:
 
 ```bash
-# Submodule'ı güncelle
+# Update submodule
 git submodule update --remote libs/true-agents
 
-# Veya klasöre gitip pull yapın
+# Or go to folder and pull
 cd libs/true-agents
 git pull origin main
 ```
 
 ---
 
-## 💡 İpuçları
+## 💡 Tips
 
-1. **Otomatik Persona Seçimi**: Task açıklamasındaki kelimelere göre doğru persona otomatik seçilir
-2. **Paralel Çalışma**: Birbirinden bağımsız görevler için paralel mod kullanın
-3. **Thinking Levels**: Görev karmaşıklığına göre thinking seviyesini ayarlayın
-   - `none` - Basit görevler
-   - `think` - Orta karmaşıklık
-   - `think-hard` - Karmaşık görevler
-   - `ultrathink` - Kritik görevler
-
----
-
-## 🔧 TypeScript Entegrasyonu
-
-Projenizde `tsconfig.json` ayarları:
-
-```json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@true-agents/*": ["libs/true-agents/src/*"]
-    }
-  }
-}
-```
-
-Kullanım:
-
-```typescript
-import { TrueCLI, PERSONAS } from '@true-agents/core/index.js';
-```
-
----
-
-## 🐛 Sorun Giderme
-
-### Submodule Çalışmıyorsa
-
-```bash
-# Submodule'ı silip yeniden ekleyin
-git submodule deinit -f libs/true-agents
-git rm -f libs/true-agents
-rm -rf .git/modules/libs/true-agents
-
-# Yeniden ekleyin
-git submodule add https://github.com/erturke/true-agents.git libs/true-agents
-```
-
-### CLI Çalışmıyorsa
-
-```bash
-# Bağımlılıkları kontrol edin
-cd libs/true-agents
-npm install
-
-# Doğrudan çalıştırın
-npx tsx src/cli.ts "test task"
-```
-
----
-
-## 📖 Daha Fazla
-
-- **[master.md](./master.md)** - Complete system reference
-- **[README.md](./README.md)** - Project overview
+1.  **Auto Persona Detection**: The system selects the right persona based on your task description.
+2.  **Parallel Execution**: Use parallel mode for independent tasks.
+3.  **Thinking Levels**: Adjust thinking level based on complexity:
+    *   `none` - Simple tasks
+    *   `think` - Medium complexity
+    *   `think-hard` - Complex tasks
+    *   `ultrathink` - Critical tasks
