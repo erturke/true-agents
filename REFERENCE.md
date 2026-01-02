@@ -72,11 +72,14 @@ PARALLEL START (if eligible)
 ### Method 1: Terminal CLI (Primary)
 
 ```bash
-# Basic usage
+# Basic usage (Auto-detects mode)
 npx tsx true-agents/src/cli.ts "task description"
 
-# With specific persona
+# With specific persona (Single Agent override)
 npx tsx true-agents/src/cli.ts --persona architect "Implement OAuth login"
+
+# Explicit A2A mode (Manual override)
+npx tsx true-agents/src/cli.ts --a2a "Force multi-agent workflow"
 
 # Parallel execution (MULTIPLE AGENTS)
 npx tsx true-agents/src/cli.ts --parallel \
@@ -88,10 +91,28 @@ npx tsx true-agents/src/cli.ts --parallel \
 npx tsx true-agents/src/cli.ts --thinking think-hard "Complex refactoring task"
 ```
 
-### Method 2: NPM Scripts (SmartHukuk)
+### Method 2: Auto A2A (NEW - "Whistling Giraffe")
+
+The system now automatically detects when to use multi-agent workflows and loads referenced documents.
 
 ```bash
-cd /Users/emre/SmartHukuk/avukat-akilli-belge-asistani
+# 1. Automatic Document Loading
+# Automatically loads, summarizes, and injects 'api_specs.md'
+npx tsx true-agents/src/cli.ts "Implement the user profile based on @api_specs.md"
+
+# 2. Natural Language References
+npx tsx true-agents/src/cli.ts "Use api_specs.md as context to implement login"
+
+# 3. Intelligent Auto-Routing
+# "Implement" -> Routes to ARCHITECT
+# "Research and implement" -> Routes to A2A (Explorer -> Architect)
+npx tsx true-agents/src/cli.ts "Research best DB practices and implement the schema"
+```
+
+### Method 3: NPM Scripts
+
+```bash
+cd /path/to/your/project
 
 # Generic agent
 npm run agent -- "task description"
@@ -255,7 +276,7 @@ npx tsx true-agents/src/cli.ts --persona architect "Integrate frontend and backe
 ### true-agents Location
 
 ```
-/Users/emre/SmartHukuk/
+/path/to/project/
 ├── true-agents/                    # Main repo (standalone)
 │   ├── src/
 │   │   ├── cli.ts                 # CLI entry point
@@ -282,11 +303,11 @@ npx tsx true-agents/src/cli.ts --persona architect "Integrate frontend and backe
 
 ---
 
-## 🔧 INTEGRATION WITH SMARTHUKUK
+## 🔧 INTEGRATION WITH HOST PROJECT
 
 ### Location
 ```
-/Users/emre/SmartHukuk/avukat-akilli-belge-asistani/true-agents/
+/path/to/project/true-agents/
 ```
 
 ### NPM Scripts (package.json)
@@ -304,9 +325,9 @@ npx tsx true-agents/src/cli.ts --persona architect "Integrate frontend and backe
 ```
 
 ### Working Directory
-Always run from SmartHukuk root:
+Always run from project root:
 ```bash
-cd /Users/emre/SmartHukuk/avukat-akilli-belge-asistani
+cd /path/to/your/project
 npm run agent:architect -- "task here"
 ```
 
@@ -366,7 +387,7 @@ When given a task:
 ### Example 1: Building a New Feature
 
 ```bash
-cd /Users/emre/SmartHukuk/avukat-akilli-belge-asistani
+cd /path/to/your/project
 
 # Step 1: Research (EXPLORER)
 npm run agent:explorer -- "Find best practices for implementing user authentication in React"
@@ -386,7 +407,7 @@ npm run agent:test -- "Write and run tests for the new authentication system"
 ```bash
 # Create workspace
 mkdir -p /tmp/bug-investigation
-cd /Users/emre/SmartHukuk/avukat-akilli-belge-asistani
+cd /path/to/your/project
 
 # Parallel investigation
 npm run agent:archaeologist -- "Understand the payment flow bug" > /tmp/bug-investigation/code-analysis.md &
@@ -430,7 +451,7 @@ npx tsx true-agents/src/cli.ts --persona test "Verify code"
 npx tsx true-agents/src/cli.ts --persona archaeologist "Understand code"
 
 # ──────────────────────────────────────────────────────────────
-# WITH NPM SCRIPTS (SmartHukuk)
+# WITH NPM SCRIPTS
 # ──────────────────────────────────────────────────────────────
 
 npm run agent:architect -- "Build feature"
@@ -459,7 +480,7 @@ wait  # Both run simultaneously
 
 ## 🚨 IMPORTANT NOTES
 
-1. **Always read from working directory**: `/Users/emre/SmartHukuk/avukat-akilli-belge-asistani`
+1. **Always read from working directory**: `/path/to/your/project`
 
 2. **Persona files are in Markdown**: `true-agents/personas/core/*.md` and `true-agents/personas/specialist/*.md`
 
