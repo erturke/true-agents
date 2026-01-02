@@ -60,20 +60,20 @@ source ~/.zshrc
 
 ## 🧠 Prompt Engineering for Meta-Agents
 
-Instead of running commands yourself, you can instruct your AI assistant to run them. The key is providing the **Instruction Protocol** (`REFERENCE.md`) to the context.
+Instead of running commands yourself, you can instruct your AI assistant to run them. The key is providing the **Instruction Protocol** (`AI_AGENT_PROTOCOL.md`) to the context.
 
 ### The "Do It For Me" Prompts
-Add `@REFERENCE.md` to your context and use these prompts:
+Add `@AI_AGENT_PROTOCOL.md` to your context and use these prompts:
 
 | Goal | Prompt Example |
 |------|----------------|
-| **Feature** | "@REFERENCE.md Build a user profile page with Tailwind." |
-| **Research** | "@REFERENCE.md Research the best Redis client and explain why." |
-| **Refactor** | "@REFERENCE.md Refactor @user.ts to be functional." |
-| **Verify** | "@REFERENCE.md Verify that the build works and tests pass." |
+| **Feature** | "@AI_AGENT_PROTOCOL.md Build a user profile page with Tailwind." |
+| **Research** | "@AI_AGENT_PROTOCOL.md Research the best Redis client and explain why." |
+| **Refactor** | "@AI_AGENT_PROTOCOL.md Refactor @user.ts to be functional." |
+| **Verify** | "@AI_AGENT_PROTOCOL.md Verify that the build works and tests pass." |
 
 ### Why this works
-`REFERENCE.md` contains a "System Prompt" that overrides your AI's default behavior of just "suggesting" code. It forces the AI into **Operator Mode**, where it executes terminal commands autonomously.
+`AI_AGENT_PROTOCOL.md` contains a "System Prompt" that overrides your AI's default behavior of just "suggesting" code. It forces the AI into **Operator Mode**, where it executes terminal commands autonomously.
 
 ---
 
