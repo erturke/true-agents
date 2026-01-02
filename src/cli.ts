@@ -1,11 +1,11 @@
 #!/usr/bin/env tsx
 /**
- * TRUE Multi-Agent System - Standalone CLI V10
+ * TRUE Multi-Agent System - Standalone CLI V11
  *
  * Usage:
  *   npx tsx cli.ts "task description"
- *   npx tsx cli.ts --persona mimar "fix the bug"
- *   npx tsx cli.ts --parallel
+ *   npx tsx cli.ts --persona architect "fix the bug"
+ *   npx tsx cli.ts --parallel "task1" "task2"
  *
  * Features:
  * - Auto-detects complexity
@@ -17,6 +17,7 @@
 import { spawn } from 'child_process';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -24,7 +25,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // TYPES & CONFIG
 // ==========================================
 
-type Persona = 'sentinel' | 'hakem' | 'kayitci' | 'denetci' | 'mimar' | 'kasif' | 'analizci' | 'test' | 'arkeolog';
+type Persona = 'sentinel' | 'referee' | 'recorder' | 'auditor' | 'architect' | 'explorer' | 'analyst' | 'test' | 'archaeologist';
 
 interface CLIOptions {
   persona?: Persona;
@@ -35,70 +36,113 @@ interface CLIOptions {
 }
 
 interface PersonaConfig {
+  id: Persona;
+  name: string;
+  icon: string;
   trigger: string[];
   thinking: string;
   model: string;
   description: string;
+  file: string;
 }
 
 // ==========================================
-// PERSONA DEFINITIONS (from master.md)
+// PERSONA DEFINITIONS (V11 - English)
 // ==========================================
 
 const PERSONAS: Record<Persona, PersonaConfig> = {
+  // CORE
   sentinel: {
-    trigger: ['verify', 'check', 'validate', 'sentinel'],
-    thinking: 'ultrathink:',
+    id: 'sentinel',
+    name: 'SENTINEL',
+    icon: '🛡️',
+    trigger: ['verify', 'validate', 'final check', 'sentinel'],
+    thinking: 'ultrathink',
     model: 'opus',
-    description: '🛡️ SENTINEL - Independent completion verification'
+    description: '🛡️ SENTINEL - Independent completion verification',
+    file: 'personas/core/sentinel.md'
   },
-  hakem: {
-    trigger: ['decide', 'judge', 'score', 'approve', 'hakem'],
-    thinking: 'think hard:',
+  referee: {
+    id: 'referee',
+    name: 'REFEREE',
+    icon: '🎯',
+    trigger: ['decide', 'approve', 'judge', 'referee'],
+    thinking: 'think hard',
     model: 'opus',
-    description: '🎯 HAKEM - Final decision maker (1-10 scoring)'
+    description: '🎯 REFEREE - Final decision maker (1-10 scoring)',
+    file: 'personas/core/referee.md'
   },
-  kayitci: {
-    trigger: ['checkpoint', 'state', 'log', 'save', 'kayitci'],
-    thinking: 'think:',
+  recorder: {
+    id: 'recorder',
+    name: 'RECORDER',
+    icon: '📋',
+    trigger: ['checkpoint', 'state', 'log', 'save', 'recorder'],
+    thinking: 'think',
     model: 'sonnet',
-    description: '📋 KAYITCI - State & checkpoint manager'
+    description: '📋 RECORDER - State & checkpoint manager',
+    file: 'personas/core/recorder.md'
   },
-  denetci: {
-    trigger: ['gate', 'reality', 'validate', 'denetci'],
-    thinking: 'think:',
+  auditor: {
+    id: 'auditor',
+    name: 'AUDITOR',
+    icon: '🔍',
+    trigger: ['gate', 'reality', 'validate', 'auditor'],
+    thinking: 'think',
     model: 'sonnet',
-    description: '🔍 DENETÇİ - Quality gate & reality validator'
+    description: '🔍 AUDITOR - Quality gate & reality validator',
+    file: 'personas/core/auditor.md'
   },
-  mimar: {
-    trigger: ['build', 'implement', 'code', 'fix', 'mimar'],
-    thinking: 'think:',
+
+  // SPECIALIST
+  architect: {
+    id: 'architect',
+    name: 'ARCHITECT',
+    icon: '🏗️',
+    trigger: ['write', 'create', 'implement', 'fix', 'code', 'build', 'architect'],
+    thinking: 'think hard',
     model: 'sonnet',
-    description: '🏗️ MİMAR - Builder & implementer'
+    description: '🏗️ ARCHITECT - Builder & implementer',
+    file: 'personas/specialist/architect.md'
   },
-  kasif: {
-    trigger: ['research', 'find', 'search', 'learn', 'kasif'],
-    thinking: 'think:',
+  explorer: {
+    id: 'explorer',
+    name: 'EXPLORER',
+    icon: '🌐',
+    trigger: ['research', 'find', 'search', 'learn', 'best practice', 'explorer'],
+    thinking: 'think',
     model: 'sonnet',
-    description: '🌐 KAŞIF - Researcher & explorer'
+    description: '🌐 EXPLORER - Researcher & explorer',
+    file: 'personas/specialist/explorer.md'
   },
-  analizci: {
-    trigger: ['analyze', 'data', 'metrics', 'query', 'analizci'],
-    thinking: 'think:',
+  analyst: {
+    id: 'analyst',
+    name: 'ANALYST',
+    icon: '🔬',
+    trigger: ['analyze', 'data', 'metrics', 'query', 'sql', 'analyst'],
+    thinking: 'think',
     model: 'sonnet',
-    description: '🔬 ANALİZCİ - Data analyst'
+    description: '🔬 ANALYST - Data analyst',
+    file: 'personas/specialist/analyst.md'
   },
   test: {
+    id: 'test',
+    name: 'TEST',
+    icon: '🧪',
     trigger: ['test', 'verify', 'check'],
-    thinking: 'think:',
+    thinking: 'think',
     model: 'sonnet',
-    description: '🧪 TEST - Verifier & tester'
+    description: '🧪 TEST - Verifier & tester',
+    file: 'personas/specialist/test.md'
   },
-  arkeolog: {
-    trigger: ['understand', 'analyze', 'structure', 'arkeolog'],
-    thinking: 'think:',
+  archaeologist: {
+    id: 'archaeologist',
+    name: 'ARCHAEOLOGIST',
+    icon: '🏛️',
+    trigger: ['understand', 'explain', 'read', 'structure', 'archaeologist'],
+    thinking: 'think',
     model: 'sonnet',
-    description: '🏛️ ARKEOLOG - Code analyst & archaeologist'
+    description: '🏛️ ARCHAEOLOGIST - Code analyst & archaeologist',
+    file: 'personas/specialist/archaeologist.md'
   }
 };
 
@@ -111,17 +155,17 @@ function analyzeComplexity(task: string): { level: number; thinking: string; mod
 
   // EXPERT level (6)
   if (lower.includes('architecture') || lower.includes('system design') || lower.includes('refactor')) {
-    return { level: 6, thinking: 'think hard:', model: 'opus' };
+    return { level: 6, thinking: 'think hard', model: 'opus' };
   }
 
   // VERY_COMPLEX (5)
   if (lower.includes('implement') || lower.includes('build') || lower.includes('create')) {
-    return { level: 5, thinking: 'think hard:', model: 'sonnet' };
+    return { level: 5, thinking: 'think hard', model: 'sonnet' };
   }
 
   // COMPLEX (4)
   if (lower.includes('analyze') || lower.includes('research') || lower.includes('find')) {
-    return { level: 4, thinking: 'think:', model: 'sonnet' };
+    return { level: 4, thinking: 'think', model: 'sonnet' };
   }
 
   // SIMPLE (2)
@@ -135,6 +179,20 @@ function analyzeComplexity(task: string): { level: number; thinking: string; mod
 function detectPersona(task: string): Persona {
   const lower = task.toLowerCase();
 
+  // Check specialist personas first (more specific)
+  for (const [name, config] of Object.entries(PERSONAS)) {
+    if (config.id.startsWith('sentinel') || config.id.startsWith('referee') ||
+        config.id.startsWith('recorder') || config.id.startsWith('auditor')) {
+      continue; // Skip core for now
+    }
+    for (const trigger of config.trigger) {
+      if (lower.includes(trigger)) {
+        return name as Persona;
+      }
+    }
+  }
+
+  // Check core personas
   for (const [name, config] of Object.entries(PERSONAS)) {
     for (const trigger of config.trigger) {
       if (lower.includes(trigger)) {
@@ -143,7 +201,24 @@ function detectPersona(task: string): Persona {
     }
   }
 
-  return 'mimar'; // Default
+  return 'architect'; // Default
+}
+
+// ==========================================
+// PERSONA FILE LOADER
+// ==========================================
+
+function loadPersonaPrompt(persona: Persona): string {
+  const config = PERSONAS[persona];
+  const fullPath = join(__dirname, config.file);
+
+  try {
+    const content = readFileSync(fullPath, 'utf-8');
+    return `You are ${config.name}. Read and follow this persona definition:\n\n${content}`;
+  } catch (err) {
+    // Fallback if file doesn't exist
+    return `You are ${config.name} - ${config.description}.\n\nUse the ${config.id} persona for this task.`;
+  }
 }
 
 // ==========================================
@@ -153,42 +228,60 @@ function detectPersona(task: string): Persona {
 function spawnClaude(task: string, options: CLIOptions): Promise<number> {
   return new Promise((resolve) => {
     const detected = detectPersona(task);
-    const complexity = analyzeComplexity(task);
+    const personaKey = options.persona || detected;
+    const config = PERSONAS[personaKey];
 
-    const persona = options.persona || detected;
-    const thinking = options.thinking
-      ? (options.thinking === 'think' ? 'think:' : options.thinking === 'think-hard' ? 'think hard:' : options.thinking === 'ultrathink' ? 'ultrathink:' : '')
-      : PERSONAS[persona].thinking;
+    // Safety check
+    if (!config) {
+      console.error(`❌ Persona not found: ${personaKey}`);
+      resolve(1);
+      return;
+    }
 
-    const model = options.model || PERSONAS[persona].model;
+    // Determine thinking level
+    let thinking: string;
+    if (options.thinking === 'think') {
+      thinking = 'think';
+    } else if (options.thinking === 'think-hard') {
+      thinking = 'think hard';
+    } else if (options.thinking === 'ultrathink') {
+      thinking = 'ultrathink';
+    } else if (options.thinking === 'none') {
+      thinking = 'none';
+    } else {
+      thinking = config.thinking || 'think';
+    }
+
+    const model = options.model || config.model || 'sonnet';
     const directory = options.directory || process.cwd();
 
-    // Build persona prompt
-    const subdir = persona === 'denetci' ? 'core' : 'specialist';
-    const personaPath = join(__dirname, 'personas', subdir, `${persona}.md`);
-    const personaPrompt = `Use the persona defined in: ${personaPath}`;
+    // Load persona prompt
+    const personaPrompt = loadPersonaPrompt(personaKey);
 
     // Build full prompt
     let fullPrompt = `${personaPrompt}\n\n`;
-    fullPrompt += `Thinking: ${thinking}\n`;
+    fullPrompt += `Thinking mode: ${thinking}\n`;
     fullPrompt += `Task: ${task}\n`;
-    fullPrompt += `\n🏷️ MARKER: ${persona.toUpperCase()}-${Date.now()}`;
+    fullPrompt += `\n🏷️ MARKER: ${config.name}-${Date.now()}`;
 
-    console.log(`\n${PERSONAS[persona].description}`);
+    console.log(`\n${config.description}`);
     console.log(`📂 Directory: ${directory}`);
     console.log(`🧠 Thinking: ${thinking || 'none'}`);
     console.log(`🤖 Model: ${model}`);
     console.log(`\n🚀 Executing...\n`);
 
     // Spawn Claude Code CLI
-    const args = ['--prompt', fullPrompt];
-    if (directory) {
-      args.push('--directory', directory);
-    }
+    // Usage: claude --print --system-prompt "..." "task"
+    const args = [
+      '--print',
+      '--system-prompt', fullPrompt,
+      task
+    ];
 
     const child = spawn('claude', args, {
       cwd: directory,
-      stdio: 'inherit'
+      stdio: 'inherit',
+      shell: true
     });
 
     child.on('close', (code) => {
@@ -273,18 +366,18 @@ async function main() {
 function showHelp() {
   console.log(`
 ╔══════════════════════════════════════════════════════════════════════╗
-║                    TRUE Multi-Agent System V10                        ║
+║                    TRUE Multi-Agent System V11                        ║
 ║                         Standalone CLI                                ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
 Usage:
   npx tsx cli.ts "task description"                Execute a task
-  npx tsx cli.ts --persona mimar "fix bug"         Use specific persona
+  npx tsx cli.ts --persona architect "fix bug"     Use specific persona
   npx tsx cli.ts --parallel "task1" "task2"        Run in parallel
   npx tsx cli.ts --thinking think-hard "analyze"   Set thinking level
 
 Options:
-  --persona <name>    Specific persona (mimar, kasif, analizci, etc.)
+  --persona <name>    Specific persona
   --parallel          Run multiple tasks in parallel
   --thinking <level>  none, think, think-hard, ultrathink
   --model <name>      sonnet, opus
@@ -292,25 +385,25 @@ Options:
 
 Personas:
   CORE (always active):
-    sentinel    🛡️  Completion verification
-    hakem       🎯  Final decision (1-10 score)
-    kayitci     📋  State & checkpoint
-    denetci     🔍  Quality gate
+    sentinel      🛡️  Completion verification
+    referee       🎯  Final decision (1-10 score)
+    recorder      📋  State & checkpoint
+    auditor       🔍  Quality gate
 
   SPECIALIST (on-demand):
-    mimar       🏗️  Builder & implementer
-    kasif       🌐  Researcher
-    analizci    🔬  Data analyst
-    test        🧪  Verifier
-    arkeolog    🏛️  Code analyst
+    architect     🏗️  Builder & implementer
+    explorer      🌐  Researcher
+    analyst       🔬  Data analyst
+    test          🧪  Verifier
+    archaeologist 🏛️  Code analyst
 
 Examples:
   npx tsx cli.ts "Implement user authentication"
-  npx tsx cli.ts --persona kasif "Find React best practices"
+  npx tsx cli.ts --persona explorer "Find React best practices"
   npx tsx cli.ts --parallel "Fix backend bug" "Update frontend"
   npx tsx cli.ts --persona sentinel "Verify implementation"
 
-📚 Documentation: master.md
+📚 Documentation: master.md, REFERENCE.md
     `);
 }
 
